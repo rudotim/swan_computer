@@ -94,15 +94,11 @@ class lostengine:
                     self.editor.processNewChar( event.key )                
             
             # get text boxes from editor
-            boxes = self.editor.getTextAreas()
-            for box in boxes:
-                self.background.blit( box[0], box[1] )
-            
-            #cmdstrobj = font.render( cmdstr, 1, (51, 204, 51))
-            #cmdstrpos = cmdstrobj.get_rect()
-            #cmdstrpos.y = background.get_rect().y
-            #background.blit(cmdstrobj, cmdstrpos)
-            
+            lines = self.editor.getTextAreas()
+            for line in lines:
+                for tuples in line:
+                    self.background.blit( tuples[0], tuples[1] )
+                        
             self.screen.blit(self.background, (0, 0))
             pygame.display.update()
             #pygame.display.flip()
