@@ -17,7 +17,6 @@ class texteditor:
     
     maxlen = 50
     textboxes = []
-    currbox = -1
     
     boxheight = 0
     cursorRect = Rect(0, 0, 23, 8)
@@ -31,7 +30,7 @@ class texteditor:
         self.surface = surface
         self.boxheight = 40
         
-        self.advanceRows()
+        self.advanceRows( self.promptStr, "" )
         
         self.startCursor()
         
@@ -75,7 +74,7 @@ class texteditor:
         if ascii_num == 13:   # enter
             self.dispatch(msg=self.cmdstr)            
             self.cmdstr = ""
-            self.advanceRows()
+            self.advanceRows( self.promptStr, "" )
             
         elif ascii_num == 8:  # backspace
             # backspace
@@ -87,13 +86,13 @@ class texteditor:
         
         
         
-    def addNewCmdLineBox(self, promptStr, row):
+    def addNewCmdLineBox(self, promptStr, text, row):
         
         # create prompt box
         promptTuple = self.createFontBox( promptStr, row )
         
         # create command line box
-        cmdTuple = self.createFontBox( "", row )
+        cmdTuple = self.createFontBox( text, row )
         
         # create and draw cursor box
         # create rect and include in textbox tuple list
@@ -106,11 +105,11 @@ class texteditor:
         
     def backspaceCmdLine(self):
         self.cmdstr = self.cmdstr[:-1]
-        self.redrawCmdLine()
+        self.redrawCmdLine( self.currRow )
         
     def appendCmdLine(self, newch):
         self.cmdstr += newch
-        self.redrawCmdLine()
+        self.redrawCmdLine( self.currRow )
         
         
         
@@ -157,35 +156,33 @@ class texteditor:
         
         
         
-    def redrawCmdLine(self):
+    def redrawCmdLine(self, row ):
         
         # erase previous tuples
-        box = self.textboxes[self.currbox]
+        box = self.textboxes[row]
         for tuples in box:
             self.eraseBox( tuples[1] )
          
         # create a new command line text box to the right of the prompt box
-        cmdTuple = self.createFontBox( self.cmdstr, self.currRow )
-        cmdTuple[1].x = self.textboxes[self.currbox][0][1].right
+        cmdTuple = self.createFontBox( self.cmdstr, row )
+        cmdTuple[1].x = self.textboxes[row][0][1].right
         
         # update command line tuple         
-        self.textboxes[self.currbox][1] = cmdTuple
+        self.textboxes[row][1] = cmdTuple
         
-        promptTuple = self.textboxes[self.currbox][0]
+        promptTuple = self.textboxes[row][0]
         
         # draw cursor relative to current text box  
-        self.moveCursor( promptTuple[1].width + cmdTuple[1].width, self.currRow )
+        self.moveCursor( promptTuple[1].width + cmdTuple[1].width, row )
         
         
     def injectText(self, text):
         print "inject text!"
-        self.advanceRows(False)
+        self.advanceRows("", text, False)
         
         
         
-    def advanceRows(self, newBox = True ):
-                
-        self.currbox += 1
+    def advanceRows(self, prompt, text, newBox = True ):
         
         boxes = self.getTextAreas()
         
@@ -196,12 +193,15 @@ class texteditor:
                 
                     # shift up by one row
                     tuples[1].y -= self.boxheight
+                    
+            # toss first box
+            self.textboxes.pop(0)
         else:
             self.currRow += 1
             
         # add newest command line
-        if newBox == True:
-            self.addNewCmdLineBox( self.promptStr, self.currRow )
+        #if newBox == True:
+        self.addNewCmdLineBox( prompt, text, self.currRow )
         
 
         
