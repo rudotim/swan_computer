@@ -136,12 +136,12 @@ class texteditor:
         self.cursorRect.y = (row * self.boxheight) + self.boxheight - self.cursorRect.height - 8
         
     def makeCursorBlink(self):
-        print "blink!"
+        #print "blink!"
         if self.blinkCursor == True:
             # draw cursor at current position
             pygame.draw.rect( self.surface, (51, 225, 51), self.cursorRect)
         else:
-            print "Stopping the blink"
+            #print "Stopping the blink"
             # erase cursor at last position
             self.eraseBox( self.cursorRect )
             
@@ -175,20 +175,15 @@ class texteditor:
         
         # draw cursor relative to current text box  
         self.moveCursor( promptTuple[1].width + cmdTuple[1].width, self.currRow )
-
         
-    def drawCursor(self, cmdLineBox ):
-        # erase previous
-        #print "prev rect: (" + str(self.cursorRect.x) + ", " + str(self.cursorRect.y) + ") w/h(" + str(self.cursorRect.width) + ", " + str(self.cursorRect.height) + ")"
-        self.eraseBox( self.cursorRect )
-        rect = Rect(cmdLineBox.right, cmdLineBox.bottom-5, 25, 5)
-        pygame.draw.rect( self.surface, (51, 225, 51), rect)
-        self.cursorRect = rect 
-        #print "new rect: (" + str(self.cursorRect.x) + ", " + str(self.cursorRect.y) + ") w/h(" + str(self.cursorRect.width) + ", " + str(self.cursorRect.height) + ")"
+        
+    def injectText(self, text):
+        print "inject text!"
+        self.advanceRows(False)
         
         
         
-    def advanceRows(self):
+    def advanceRows(self, newBox = True ):
                 
         self.currbox += 1
         
@@ -205,7 +200,8 @@ class texteditor:
             self.currRow += 1
             
         # add newest command line
-        self.addNewCmdLineBox( self.promptStr, self.currRow )
+        if newBox == True:
+            self.addNewCmdLineBox( self.promptStr, self.currRow )
         
 
         

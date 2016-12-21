@@ -108,6 +108,8 @@ class lostengine:
         print "You got event {0} with message {1}".format(event,msg)
         if msg == "lost":
             self.initiateLostNumbers()
+        if msg == "txt":
+            self.editor.injectText("Hey It's me, Walt!")
 
     def initiateLostNumbers(self):
         print "You gots to imput da numbaz!"
