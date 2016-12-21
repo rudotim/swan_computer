@@ -98,7 +98,7 @@ class texteditor:
         # create rect and include in textbox tuple list
         self.moveCursor( promptTuple[1].width + cmdTuple[1].width, row )
         
-        self.textboxes.append( [ promptTuple, cmdTuple ] )        
+        return [ promptTuple, cmdTuple ]
         
         
         
@@ -199,11 +199,9 @@ class texteditor:
         else:
             self.currRow += 1
             
-        # add newest command line
-        #if newBox == True:
-        self.addNewCmdLineBox( prompt, text, self.currRow )
+        # add newest input box
+        self.textboxes.append( self.addNewCmdLineBox( prompt, text, self.currRow ) )
         
-
         
         
         # ------------------------------
