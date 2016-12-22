@@ -6,7 +6,7 @@ from time import sleep
 import pygame
 from pygame.locals import *
 
-from texteditor import texteditor
+from texteditor2 import texteditor
 
 class lostengine:
            
@@ -96,8 +96,7 @@ class lostengine:
             # get text boxes from editor
             lines = self.editor.getTextAreas()
             for line in lines:
-                for tuples in line:
-                    self.background.blit( tuples[0], tuples[1] )
+                line.draw()
                         
             self.screen.blit(self.background, (0, 0))
             pygame.display.update()
