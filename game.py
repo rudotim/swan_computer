@@ -5,7 +5,6 @@ import os
 import pygame
 from pygame.locals import *
 
-from texteditor import texteditor
 from lostengine import lostengine
     
     
