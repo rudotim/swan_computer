@@ -6,7 +6,7 @@ from time import sleep
 import pygame
 from pygame.locals import *
 
-from texteditor2 import texteditor
+from texteditor import texteditor
 
 class lostengine:
            
