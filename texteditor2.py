@@ -34,8 +34,9 @@ class texteditor:
         self.boxheight = 40
         
         self.advanceRows( self.promptStr, "" )
+        self.moveCursor(self.inputbox)
         
-        #self.startCursor()
+        self.startCursor()
         
         
   
@@ -72,6 +73,8 @@ class texteditor:
             self.inputbox.append( chr(ascii_num) )
         else:
             self.processControlChar(ascii_num)
+        
+        self.moveCursor(self.inputbox)
         
     def processControlChar(self, ascii_num):
         if ascii_num == 13:   # enter
@@ -110,12 +113,19 @@ class texteditor:
         self.blinkCursor = False
         self.makeCursorBlink()
         
-    def moveCursor(self, x, row):
-        print "Erasing last cursor box"
+    def moveCursor(self, inputbox):
+        print "moving cursor to inputbox"
         self.eraseBox( self.cursorRect )
-        print "Moving cursor to: " + str(x)
-        self.cursorRect.x = x;
-        self.cursorRect.y = (row * self.boxheight) + self.boxheight - self.cursorRect.height - 8
+        self.cursorRect.x = inputbox.getX() + inputbox.getWidth()
+        print "rect.width: " + str(inputbox.getWidth())
+        self.cursorRect.y = (inputbox.row * self.boxheight) + self.boxheight - self.cursorRect.height - 8
+        
+    #def moveCursor(self, x, row):
+     #   print "Erasing last cursor box"
+      #  self.eraseBox( self.cursorRect )
+       # print "Moving cursor to: " + str(x)
+        #self.cursorRect.x = x;
+        #self.cursorRect.y = (row * self.boxheight) + self.boxheight - self.cursorRect.height - 8
         
     def makeCursorBlink(self):
         #print "blink!"
@@ -147,7 +157,7 @@ class texteditor:
         
         
         
-    def advanceRows(self, prompt, text, newBox = True ):
+    def advanceRows(self, prompt, text, showCursor = True ):
         
         boxes = self.getTextAreas()
         
@@ -166,6 +176,9 @@ class texteditor:
         # add newest input box
         self.inputbox = inputbox( prompt, text, self.currRow, self.font, self.surface )
         self.textboxes.append( self.inputbox )
+        
+        #if showCursor == True:
+        #    self.moveCursor( self.inputbox.getWidth(), self.currRow )
         
         
         

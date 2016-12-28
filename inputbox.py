@@ -6,7 +6,6 @@ from pygame import font
 
 class inputbox:
     
-    rect = Rect(0, 0, 0, 0)
     rowTuples = []
     boxheight = 40
     
@@ -34,20 +33,23 @@ class inputbox:
         for t in self.rowTuples:
             self.surface.blit( t[0], t[1] )
         
+    def getX(self):
+        return self.promptTuple[1].x
+
+    def getWidth(self):
+        return self.promptTuple[1].width + self.textTuple[1].width
+        
     def redraw(self, row ):
         
         # erase previous tuples
         self.erase()
          
         # create a new command line text box to the right of the prompt box
-        cmdTuple = self.createFontBox( self.text, row )
-        cmdTuple[1].x = self.promptTuple[1].right
+        self.textTuple = self.createFontBox( self.text, row )
+        self.textTuple[1].x = self.promptTuple[1].right
         
         # update command line tuple         
-        self.rowTuples[1] = cmdTuple;
-        
-        # draw cursor relative to current text box  
-        #self.moveCursor( promptTuple[1].width + cmdTuple[1].width, row )
+        self.rowTuples[1] = self.textTuple;
         
         
     def erase(self):
