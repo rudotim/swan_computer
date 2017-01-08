@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+    <meta content="utf-8" http-equiv="encoding">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+</head>
+<body>
+FUCK?
+
+<button onClick="alarm();">Alarm</button>
+
+</body>
+
+<script>
+
+function alarm()
+{
+    var data = { "name": "John", "location": "Boston" };
+    $.ajax({
+        method: "POST",
+        contentType: "application/json; charset=UTF-8",
+        url: "swan/alarm",
+        data: JSON.stringify(data),
+        dataType : "json"
+    }).
+    done(function( json )  {
+        alert( json );
+    }).
+    fail(function(jqXHR, textStatus, errorThrown) {
+        console.log(jqXHR);
+        alert("Sorry. Server unavailable. ");
+    }); 
+}
+
+</script>
+
+</html>

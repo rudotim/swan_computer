@@ -43,7 +43,8 @@ class texteditor:
     def golost(self):
         # show box
         box = self.font.render( "Enter the numbers!", 1, (255, 255, 255))
-        pos = box.get_rect()        
+        pos = box.get_rect() 
+        '''       
         pos.y = self.surface.get_rect().centery - (box.get_rect().height/2)
         pos.x = self.surface.get_rect().centerx - (box.get_rect().width/2) 
 
@@ -57,7 +58,15 @@ class texteditor:
                 
         pygame.draw.rect( self.surface, (255, 0, 0), rectOut, 2)
         pygame.draw.rect( self.surface, (255, 0, 0), rectIn, 1)
+        
+        tmpX = 0
+        tmpY = (8 * self.boxheight)
+        inpbox = inputbox( "", "4 8 15 16 23 42", tmpX, tmpY, self.font, self.surface )
+        inpbox.draw()
+        self.moveCursor(inpbox)
+        
         self.surface.blit( box, pos )
+        '''
         
         
         
@@ -79,7 +88,6 @@ class texteditor:
     def processControlChar(self, ascii_num):
         if ascii_num == 13:   # enter
             self.dispatch(msg=self.inputbox.text)            
-            self.cmdstr = ""
             self.advanceRows( self.promptStr, "" )
             
         elif ascii_num == 8:  # backspace
@@ -116,9 +124,9 @@ class texteditor:
     def moveCursor(self, inputbox):
         print "moving cursor to inputbox"
         self.eraseBox( self.cursorRect )
-        self.cursorRect.x = inputbox.getX() + inputbox.getWidth()
+        self.cursorRect.x = inputbox.cursorX # inputbox.getX() + inputbox.getWidth()
         print "rect.width: " + str(inputbox.getWidth())
-        self.cursorRect.y = (inputbox.row * self.boxheight) + self.boxheight - self.cursorRect.height - 8
+        self.cursorRect.y = inputbox.cursorY # (inputbox.row * self.boxheight) + self.boxheight - self.cursorRect.height - 8
         
     #def moveCursor(self, x, row):
      #   print "Erasing last cursor box"
@@ -174,7 +182,7 @@ class texteditor:
             self.currRow += 1
             
         # add newest input box
-        self.inputbox = inputbox( prompt, text, self.currRow, self.font, self.surface )
+        self.inputbox = inputbox( prompt, text, 0, self.currRow * self.boxheight, self.font, self.surface )
         self.textboxes.append( self.inputbox )
         
         #if showCursor == True:
