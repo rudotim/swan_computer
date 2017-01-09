@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import os
+import sys, getopt
 
 import pygame
 from pygame.locals import *
@@ -13,9 +14,21 @@ from lostengine import lostengine
     
     
     
-def main():
-      
+def main( argv ):
+    
     usingPi = False
+    try:
+        opts, args = getopt.getopt(argv,"h",["pi"])
+    except getopt.GetoptError:
+        print 'error: test.py -i <inputfile> -o <outputfile>'
+        sys.exit(2)
+    for opt, arg in opts:
+        print opt
+        if opt == '-h':
+            print 'test.py -i <inputfile> -o <outputfile>'
+            sys.exit()
+        elif opt in ("--pi"):
+            usingPi = True
     
     try:
         # start web server in separate thread
@@ -33,4 +46,5 @@ def main():
     server.stop()
     thread.join()
 
-if __name__ == '__main__': main()
+if __name__ == "__main__":
+    main(sys.argv[1:])

@@ -62,21 +62,15 @@ class lostengine:
         pygame.font.init()
         #x, y = screen.get_size()
         
-        pygame.display.set_caption('Basic Pygame program')
+        pygame.display.set_caption('Lost Emulator')
     
         # Fill background
         self.background = pygame.Surface(self.screen.get_size())
         self.background = self.background.convert()
         self.background.fill((0, 0, 0))
     
-        # Display some text
-        # font = pygame.font.Font(None, 36)
+        # Load Apple II font
         font = pygame.font.Font("PrintChar21.ttf", 26)
-        #text = font.render("Hello There", 1, (51, 204, 51))
-        #textpos = text.get_rect()
-        #textpos.centerx = background.get_rect().centerx
-        #background.blit(text, textpos)
-        
         
         # Blit everything to the screen
         self.screen.blit(self.background, (0, 0))
