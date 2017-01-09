@@ -111,6 +111,8 @@ class lostengine:
             self.initiateLostNumbers()
         elif msg == "txt":
             self.editor.injectText("Hey It's me, Walt!")
+        elif msg == "video":
+            self.editor.playVideo( "swan.mp4" )
         elif msg == "exit":
             print "exiting"
             self.running = False

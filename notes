@@ -1,0 +1,16 @@
+
+rpi apps:
+omxplayer
+
+python packages:
+
+core:
+pygame
+
+video:
+https://github.com/csik/pyomxplayer
+pexpect
+
+experimental video:
+opencv?
+pygame.Movie

@@ -39,7 +39,10 @@ class texteditor:
         self.startCursor()
         
         
-  
+    def playVideo(self, video_file):
+        print "playing video: " + video_file
+        
+        
     def golost(self):
         # show box
         box = self.font.render( "Enter the numbers!", 1, (255, 255, 255))
