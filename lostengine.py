@@ -11,6 +11,7 @@ from texteditor import texteditor
 class lostengine:
            
     running = True
+    screen = None
     
     def onPi(self):
         print "On RPI"
@@ -18,8 +19,8 @@ class lostengine:
         if disp_no:
             print "I'm running under X display = {0}".format(disp_no)
         
-        os.environ["SDL_FBDEV"] = "/dev/fb0"
-        pygame.init()
+        #os.environ["SDL_FBDEV"] = "/dev/fb0"
+        #pygame.init()
         
         # Check which frame buffer drivers are available
         # Start with fbcon since directfb hangs with composite output
@@ -28,11 +29,11 @@ class lostengine:
         found = False
         for driver in drivers:
             # Make sure that SDL_VIDEODRIVER is set
-            #if not os.getenv('SDL_VIDEODRIVER'):
-            #        os.putenv('SDL_VIDEODRIVER', driver)
+            if not os.getenv('SDL_VIDEODRIVER'):
+                os.putenv('SDL_VIDEODRIVER', driver)
             try:
                     print("Driver: "+driver)
-                    #pygame.display.init()
+                    pygame.display.init()
             except pygame.error:
                     print 'Driver: {0} failed.'.format(driver)
                     continue
@@ -40,27 +41,24 @@ class lostengine:
             print("this one works.")
             break
         
-        # Initialise screen
-        size = (pygame.display.Info().current_w, pygame.display.Info().current_h)
-        print "Framebuffer size: %d x %d" % (size[0], size[1])
-        self.screen = pygame.display.set_mode(size, pygame.FULLSCREEN)
-
         if not found:
             raise Exception('No suitable video driver found!')
+        else:
+            # Initialise screen
+            size = (pygame.display.Info().current_w, pygame.display.Info().current_h)
+            print "Framebuffer size: %d x %d" % (size[0], size[1])
+            return pygame.display.set_mode(size, pygame.FULLSCREEN)
 
     def init(self, pi):
         if pi == True:
-            self.onPi()
+            self.screen = self.onPi()
         else:
             self.screen = pygame.display.set_mode((640, 480)) # , FULLSCREEN) DO NOT USE THIS UNLESS YOU HAVE EXIT
            
-        #pygame.init()
-        #screen = pygame.display.set_mode(size, pygame.FULLSCREEN)
         # Clear the screen to start
         self.screen.fill((150, 150, 150))        
         
         pygame.font.init()
-        #x, y = screen.get_size()
         
         pygame.display.set_caption('Lost Emulator')
     

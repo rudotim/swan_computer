@@ -40,7 +40,7 @@ def main( argv ):
         lost = lostengine()
         lost.init( usingPi )
         lost.mainLoop()
-    except KeyboardInterrupt:
+    except Exception:
         print '^C received, shutting down the web server'
         
     server.stop()
