@@ -68,6 +68,11 @@ class inputbox:
         # update command line tuple         
         self.rowTuples[1] = self.textTuple;
         
+        # set cursor pos
+        self.cursorX = self.getX() + self.getWidth()
+        cursorHeight = 8
+        self.cursorY = self.y + self.boxheight - cursorHeight
+
         
     def erase(self):
         for t in self.rowTuples:

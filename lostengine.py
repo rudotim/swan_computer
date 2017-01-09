@@ -10,6 +10,8 @@ from texteditor import texteditor
 
 class lostengine:
            
+    running = True
+    
     def onPi(self):
         print "On RPI"
         disp_no = os.getenv("DISPLAY")
@@ -86,7 +88,7 @@ class lostengine:
         
     def mainLoop(self):
         # Event loop
-        while 1:
+        while self.running == True:
             for event in pygame.event.get():
                 if event.type == QUIT:
                     return
@@ -107,8 +109,11 @@ class lostengine:
         print "You got event {0} with message {1}".format(event,msg)
         if msg == "lost":
             self.initiateLostNumbers()
-        if msg == "txt":
+        elif msg == "txt":
             self.editor.injectText("Hey It's me, Walt!")
+        elif msg == "exit":
+            print "exiting"
+            self.running = False
 
     def initiateLostNumbers(self):
         print "You gots to imput da numbaz!"

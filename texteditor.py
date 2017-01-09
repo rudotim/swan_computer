@@ -122,18 +122,11 @@ class texteditor:
         self.makeCursorBlink()
         
     def moveCursor(self, inputbox):
-        print "moving cursor to inputbox"
+        #print "moving cursor to inputbox"
         self.eraseBox( self.cursorRect )
         self.cursorRect.x = inputbox.cursorX # inputbox.getX() + inputbox.getWidth()
-        print "rect.width: " + str(inputbox.getWidth())
+        #print "rect.x,y: " + str(inputbox.cursorX) + ", " + str(inputbox.cursorY)
         self.cursorRect.y = inputbox.cursorY # (inputbox.row * self.boxheight) + self.boxheight - self.cursorRect.height - 8
-        
-    #def moveCursor(self, x, row):
-     #   print "Erasing last cursor box"
-      #  self.eraseBox( self.cursorRect )
-       # print "Moving cursor to: " + str(x)
-        #self.cursorRect.x = x;
-        #self.cursorRect.y = (row * self.boxheight) + self.boxheight - self.cursorRect.height - 8
         
     def makeCursorBlink(self):
         #print "blink!"
