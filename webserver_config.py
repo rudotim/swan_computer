@@ -37,7 +37,6 @@ class webserver_config(BaseHTTPRequestHandler):
             if None != re.search('/swan/*', self.path):
                 ctype = cgi.parse_header(self.headers.getheader('content-type'))
                 if ctype == 'application/json':
-                    print "Yup, it's json"
                     mimetype = "application/json"
                     sendReply = True
             if self.path.endswith(".html"):
@@ -83,7 +82,7 @@ class webserver_config(BaseHTTPRequestHandler):
             # set the right mime type
 
             sendReply = False
-            if None != re.search('/swan/sound/*', self.path):
+            if None != re.search('/swan/audio/*', self.path):
                 ctype, pdict = cgi.parse_header(self.headers.getheader('content-type'))
                 print pdict
                 
@@ -94,10 +93,10 @@ class webserver_config(BaseHTTPRequestHandler):
                     
                     print jsonDict
                     # alarm will have id
-                    if 'file' in jsonDict:
-                        print "playing sound: [" + jsonDict['file'] + "]"
+                    if 'res' in jsonDict:
+                        print "playing sound: [" + jsonDict['res'] + "]"
                         
-                        self.controller.playAudio( jsonDict['file'] )
+                        self.controller.playAudio( jsonDict['res'] )
                     else:
                         print "Failed to find 'file' in jsonDict"
                     
@@ -110,11 +109,12 @@ class webserver_config(BaseHTTPRequestHandler):
                     #print data_string
                     jsonDict = json.loads( data_string )
                     
-                    if 'video' in jsonDict :
+                    if 'res' in jsonDict :
                         # video will have name
-                        print "playing video__: " + jsonDict['video']
+                        print "playing video__: " + jsonDict['res']
+                        self.controller.playVideo( jsonDict['res'] )
                     else:
-                        print "Could not find entry for 'video' in dictionary"
+                        print "Could not find entry for 'res' in dictionary"
                     sendReply = True            
             if sendReply == True:
                 # Open the static file requested and send it

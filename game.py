@@ -33,7 +33,7 @@ def main( argv ):
             usingPi = True
     
     try:
-        controller = gamecontroller.gamecontroller()
+        controller = gamecontroller.gamecontroller( usingPi )
         
         # start web server in separate thread
         server = webserver(7777, controller)
