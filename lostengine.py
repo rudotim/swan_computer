@@ -13,6 +13,9 @@ class lostengine:
     running = True
     screen = None
     
+    def __init__(self, controller):
+        self.controller = controller
+
     def onPi(self):
         print "On RPI"
         disp_no = os.getenv("DISPLAY")
@@ -68,14 +71,14 @@ class lostengine:
         self.background.fill((0, 0, 0))
     
         # Load Apple II font
-        font = pygame.font.Font("PrintChar21.ttf", 26)
+        font = pygame.font.Font("res/fonts/PrintChar21.ttf", 26)
         
         # Blit everything to the screen
         self.screen.blit(self.background, (0, 0))
         pygame.display.update()
         #pygame.display.flip()
         
-        self.editor = texteditor( font, self.background ) 
+        self.editor = texteditor( font, self.background, self.controller ) 
         self.editor.register( self.rcvCommand )
         
     def mainLoop(self):

@@ -4,6 +4,8 @@ import os
 import sys, getopt
 
 import pygame
+#from gamecontroller import gamecontroller
+import gamecontroller
 from pygame.locals import *
 
 from threading import Thread
@@ -31,13 +33,15 @@ def main( argv ):
             usingPi = True
     
     try:
+        controller = gamecontroller.gamecontroller()
+        
         # start web server in separate thread
-        server = webserver(7777)
+        server = webserver(7777, controller)
         thread = Thread(target = server.start, args = [])
         thread.start()
         
         # start lost engine
-        lost = lostengine()
+        lost = lostengine(controller)
         lost.init( usingPi )
         lost.mainLoop()
     except Exception:

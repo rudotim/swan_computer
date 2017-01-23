@@ -3,6 +3,8 @@ import pygame, sys
 from pygame.locals import *
 
 from pygame import font
+#from videoplayer import videoplayer
+#import videoplayer
 
 import threading
 import types
@@ -26,8 +28,10 @@ class texteditor:
     
     inputbox = None 
     
-    def __init__(self, font, surface):
+    def __init__(self, font, surface, controller):
         self.listeners = {}
+        
+        self.controller = controller
         
         self.font = font
         self.surface = surface
@@ -39,8 +43,6 @@ class texteditor:
         self.startCursor()
         
         
-    def playVideo(self, video_file):
-        print "playing video: " + video_file
         
         
     def golost(self):

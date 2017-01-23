@@ -6,9 +6,10 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 </head>
 <body>
-FUCK?
-
-<button onClick="alarm();">Alarm</button>
+<button onClick="video();">Play Video</button>
+<br>
+<button onClick="alarm();">Play Alarm</button>
+<br>
 
 </body>
 
@@ -16,11 +17,30 @@ FUCK?
 
 function alarm()
 {
-    var data = { "name": "John", "location": "Boston" };
+    var data = { "file": "Code ok.mp3", "location": "Boston" };
     $.ajax({
         method: "POST",
         contentType: "application/json; charset=UTF-8",
-        url: "swan/alarm",
+        url: "swan/sound",
+        data: JSON.stringify(data),
+        dataType : "json"
+    }).
+    done(function( json )  {
+        alert( json );
+    }).
+    fail(function(jqXHR, textStatus, errorThrown) {
+        console.log(jqXHR);
+        alert("Sorry. Server unavailable. ");
+    }); 
+}
+
+function video()
+{
+    var data = { "name": "swan.mp4" };
+    $.ajax({
+        method: "POST",
+        contentType: "application/json; charset=UTF-8",
+        url: "swan/video/swan.mp4",
         data: JSON.stringify(data),
         dataType : "json"
     }).

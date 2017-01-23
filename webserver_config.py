@@ -3,10 +3,21 @@ from os import curdir, sep
 import re
 import cgi
 import json
+#import gamecontroller
 
 # This class will handles any incoming request from the browser 
 class webserver_config(BaseHTTPRequestHandler):
+        
+    #controller = None
     
+    #def __init__(self, controller):
+    #    self.controller = controller
+    #    BaseHTTPRequestHandler.__init__(self)
+    #    #super(BaseHTTPRequestHandler, self).__init__()
+        
+    def setController(self, controller):
+        self.controller = controller
+        
     # Handler for the GET requests
     def do_GET(self):
         print self.path
@@ -24,7 +35,7 @@ class webserver_config(BaseHTTPRequestHandler):
 
             sendReply = False
             if None != re.search('/swan/*', self.path):
-                ctype, pdict = cgi.parse_header(self.headers.getheader('content-type'))
+                ctype = cgi.parse_header(self.headers.getheader('content-type'))
                 if ctype == 'application/json':
                     print "Yup, it's json"
                     mimetype = "application/json"
@@ -47,7 +58,7 @@ class webserver_config(BaseHTTPRequestHandler):
 
             if sendReply == True:
                 # Open the static file requested and send it
-                f = open(curdir + sep + self.path) 
+                f = open(curdir + sep + "web" + sep + self.path) 
                 self.send_response(200)
                 self.send_header('Content-type',mimetype)
                 self.end_headers()
@@ -60,7 +71,7 @@ class webserver_config(BaseHTTPRequestHandler):
     def do_POST(self):
         print "POST> " + self.path
         if self.path=="/":
-            self.path="/index.html"
+            self.path="/web/index.html"
         
         #if None != re.search('/swan/*', self.path):
         #    ctype, pdict = cgi.parse_header(self.headers.getheader('content-type'))
@@ -72,26 +83,47 @@ class webserver_config(BaseHTTPRequestHandler):
             # set the right mime type
 
             sendReply = False
-            if None != re.search('/swan/*', self.path):
+            if None != re.search('/swan/sound/*', self.path):
+                ctype, pdict = cgi.parse_header(self.headers.getheader('content-type'))
+                print pdict
+                
+                if ctype == 'application/json':
+                    data_string = self.rfile.read(int(self.headers['Content-Length']))
+                    #print data_string
+                    jsonDict = json.loads( data_string )
+                    
+                    print jsonDict
+                    # alarm will have id
+                    if 'file' in jsonDict:
+                        print "playing sound: [" + jsonDict['file'] + "]"
+                        
+                        self.controller.playAudio( jsonDict['file'] )
+                    else:
+                        print "Failed to find 'file' in jsonDict"
+                    
+                    sendReply = True
+                    
+            elif None != re.search('/swan/video/*', self.path):
                 ctype, pdict = cgi.parse_header(self.headers.getheader('content-type'))
                 if ctype == 'application/json':
-                    print "Yup, it's json"
-                    mimetype = "application/json"
                     data_string = self.rfile.read(int(self.headers['Content-Length']))
-                    print data_string
-                    dict = json.loads( data_string )
-                    print dict
-                    print dict['name']
-                    print dict['location']
-                    sendReply = True
-            
+                    #print data_string
+                    jsonDict = json.loads( data_string )
+                    
+                    if 'video' in jsonDict :
+                        # video will have name
+                        print "playing video__: " + jsonDict['video']
+                    else:
+                        print "Could not find entry for 'video' in dictionary"
+                    sendReply = True            
             if sendReply == True:
                 # Open the static file requested and send it
+                mimetype = "application/json"
                 self.send_response(200, "OK")
                 self.send_header('Content-type',mimetype)
                 self.end_headers()
                 
-                jsond = "{ \"potato\" : 9 }"
+                jsond = "{ \"success\" : true }"
                 self.wfile.write( jsond )
                 
             return
