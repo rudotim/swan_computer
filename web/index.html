@@ -4,6 +4,11 @@
     <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
     <meta content="utf-8" http-equiv="encoding">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    
+    <link rel="stylesheet" href="css/lost.css">
+
+    <script src="js/lost.js"></script>
+
 </head>
 <body>
 <button onClick="playSound('swan.mp4');">Play Video</button>
@@ -15,74 +20,6 @@
 
 <script>
 
-function playSound( sound )
-{
-    playResource( sound, 'swan/audio' );
-}
-
-function playVideo( video )
-{
-    playResource( video, 'swan/video' );
-}
-
-function playResource( resource, urlPath )
-{
-    var data = { "res": resource };
-    $.ajax({
-        method: "POST",
-        contentType: "application/json; charset=UTF-8",
-        url: urlPath,
-        data: JSON.stringify(data),
-        dataType : "json"
-    }).
-    done(function( json )  {
-        alert( json );
-    }).
-    fail(function(jqXHR, textStatus, errorThrown) {
-        console.log(jqXHR);
-        alert("Sorry. Server unavailable. ");
-    }); 
-}
-
-/*
-function alarm()
-{
-    var data = { "res": "Code ok.mp3" };
-    $.ajax({
-        method: "POST",
-        contentType: "application/json; charset=UTF-8",
-        url: "swan/sound",
-        data: JSON.stringify(data),
-        dataType : "json"
-    }).
-    done(function( json )  {
-        alert( json );
-    }).
-    fail(function(jqXHR, textStatus, errorThrown) {
-        console.log(jqXHR);
-        alert("Sorry. Server unavailable. ");
-    }); 
-}
-
-function video()
-{
-    var data = { "res": "swan.mp4" };
-    $.ajax({
-        method: "POST",
-        contentType: "application/json; charset=UTF-8",
-        url: "swan/video/swan.mp4",
-        data: JSON.stringify(data),
-        dataType : "json"
-    }).
-    done(function( json )  {
-        alert( json );
-    }).
-    fail(function(jqXHR, textStatus, errorThrown) {
-        console.log(jqXHR);
-        alert("Sorry. Server unavailable. ");
-    }); 
-}
-*/
 
 </script>
 
