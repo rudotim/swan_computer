@@ -107,7 +107,13 @@ class lostengine:
         elif msg == "txt":
             self.editor.injectText("Hey It's me, Walt!")
         elif msg == "video":
-            self.editor.playVideo( "swan.mp4" )
+            self.controller.playVideo( "swan.mp4" )
+        elif msg == "audio":
+            self.controller.playAudio( "Code ok.mp3" )
+        elif msg == "count":
+            self.controller.resetCountdown(10)
+        elif msg == "countstop":
+            self.controller.stopCounting()
         elif msg == "exit":
             print "exiting"
             self.running = False

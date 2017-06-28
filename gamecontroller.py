@@ -1,10 +1,15 @@
 
+from countdown_thread import countdown_thread
 from videoplayer import videoplayer
+
 
 class gamecontroller:
     
+    countdownThread = None
+    
     def __init__(self, usingPi):
         self.usingPi = usingPi
+        self.countdownThread = countdown_thread(self)
     
     def playVideo(self, video_file):
         videoPath = "res/video/" + video_file
@@ -25,3 +30,11 @@ class gamecontroller:
             vplayer.playAudio( path )    
         else:
             print "simulating audio: " + path
+            
+    def resetCountdown(self, seconds):
+        self.countdownThread.resetCountdown(seconds)
+        
+    def stopCounting(self):
+        self.countdownThread.stopCounting()
+        
+        
