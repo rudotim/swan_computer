@@ -33,13 +33,11 @@ class inputbox:
         self.rowTuples = [ self.promptTuple, self.textTuple ]
         
         # set cursor pos
-        self.cursorX = self.getX() + self.getWidth()
+        self.cursorX = self.getX() + self.getWidth()        
         cursorHeight = 8
         self.cursorY = y + self.boxheight - cursorHeight
         
         
-    def getCursorPos(self):
-        print "get it"
         
     def shiftUp(self):
         for t in self.rowTuples:
@@ -72,7 +70,10 @@ class inputbox:
         self.cursorX = self.getX() + self.getWidth()
         cursorHeight = 8
         self.cursorY = self.y + self.boxheight - cursorHeight
-
+        
+        
+    def getCursorPos(self):
+        return (self.cursorX, self.cursorY)
         
     def erase(self):
         for t in self.rowTuples:
