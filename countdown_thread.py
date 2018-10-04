@@ -4,7 +4,7 @@ import threading
 from time import sleep
 
 from playsound import playsound
-from __builtin__ import True
+#from __builtin__ import True
 
 
 class countdown_thread:
@@ -22,10 +22,10 @@ class countdown_thread:
     
     def lostNumbersEntered(self):
         if self.running == True:
-            print "You did it!  hooray!"
+            print ("You did it!  hooray!")
             self.resetCountdown( self.LOST_TIME )
         else:
-            print "Nothing was happening - why did you enter the numbers?"
+            print ("Nothing was happening - why did you enter the numbers?")
 
     
     def resetCountdown(self, numSeconds):
@@ -35,7 +35,7 @@ class countdown_thread:
             self.stopCounting()
             self.countThread.join(5)
 
-        print "new countdown set to " + str(numSeconds)
+        print ("new countdown set to " + str(numSeconds))
         
         # start new countdown thread
         self.countThread = threading.Thread(group=None, target=self.countdownRun, name="countdownThread", args=(numSeconds,), kwargs={})
@@ -44,11 +44,11 @@ class countdown_thread:
     def countdownRun(self, numSeconds):
         self.running = True
         
-        print "counting down..."
-        print "to " + str(numSeconds)
+        print ("counting down...")
+        print ("to " + str(numSeconds))
         
         for x in range(0, numSeconds): 
-            print "running? " + str(self.isRunning()) + " " + str(x)
+            print ("running? " + str(self.isRunning()) + " " + str(x))
             sleep(0.5)
             if self.isRunning() == False:
                 break
@@ -56,7 +56,7 @@ class countdown_thread:
         if not self.callback == None:
             self.callback()
             
-        print "Done counting"
+        print ("Done counting")
         
     def isRunning(self):
         return self.running

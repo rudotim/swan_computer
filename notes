@@ -5,8 +5,19 @@ omxplayer
 python packages:
 
 core:
-pygame
+    pygame
+        python3 -m pip install -U pygame --user
+        test:
+        python3 -m pygame.examples.aliens
 
+    pip (maybe optional depnding on distro)
+        wget https://bootstrap.pypa.io/get-pip.py
+        sudo python3.6 get-pip.py
+
+
+    playsound:
+        pip3 install playsound
+        
 video:
 https://github.com/csik/pyomxplayer
 pexpect

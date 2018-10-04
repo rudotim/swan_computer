@@ -17,10 +17,10 @@ class lostengine:
         self.controller = controller
 
     def onPi(self):
-        print "On RPI"
+        print ("On RPI")
         disp_no = os.getenv("DISPLAY")
         if disp_no:
-            print "I'm running under X display = {0}".format(disp_no)
+            print ("I'm running under X display = {0}".format(disp_no))
         
         #os.environ["SDL_FBDEV"] = "/dev/fb0"
         #pygame.init()
@@ -38,7 +38,7 @@ class lostengine:
                     print("Driver: "+driver)
                     pygame.display.init()
             except pygame.error:
-                    print 'Driver: {0} failed.'.format(driver)
+                    print ('Driver: {0} failed.'.format(driver))
                     continue
             found = True
             print("this one works.")
@@ -49,7 +49,7 @@ class lostengine:
         else:
             # Initialise screen
             size = (pygame.display.Info().current_w, pygame.display.Info().current_h)
-            print "Framebuffer size: %d x %d" % (size[0], size[1])
+            print ("Framebuffer size: %d x %d" % (size[0], size[1]))
             return pygame.display.set_mode(size, pygame.FULLSCREEN)
 
     def init(self, pi):
@@ -85,7 +85,7 @@ class lostengine:
         # Event loop
         while self.running == True:
             for event in pygame.event.get():
-                if event.type == QUIT:
+                if event.type == pygame.QUIT:
                     return
                 if event.type == pygame.KEYDOWN:
                     self.editor.processNewChar( event.key )                
@@ -101,7 +101,7 @@ class lostengine:
             sleep(0.05)
         
     def rcvCommand(self,sender,event,msg=None):
-        print "You got event {0} with message {1}".format(event,msg)
+        print ("You got event {0} with message {1}".format(event,msg))
         if msg == "lost":
             self.initiateLostNumbers()
         elif msg == "txt":
@@ -117,10 +117,10 @@ class lostengine:
         elif msg == "countstop":
             self.controller.stopCounting()
         elif msg == "exit":
-            print "exiting"
+            print ("exiting")
             self.running = False
 
     def initiateLostNumbers(self):
-        print "You gots to imput da numbaz!"
+        print ("You gots to imput da numbaz!")
         self.editor.golost()
         

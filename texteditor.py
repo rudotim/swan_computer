@@ -100,7 +100,7 @@ class texteditor:
             self.inputbox.backspace()
         else:
             # ?
-            print "Don't know key " + str(ascii_num)
+            print ("Don't know key " + str(ascii_num))
         
         
         
@@ -116,12 +116,12 @@ class texteditor:
         
         
     def startCursor(self):
-        print "Starting cursor"        
+        print ("Starting cursor")        
         self.blinkCursor = True
         self.makeCursorBlink()
         
     def stopCursor(self):
-        print "Stopping cursor"
+        print ("Stopping cursor")
         self.blinkCursor = False
         self.makeCursorBlink()
         
@@ -162,7 +162,7 @@ class texteditor:
         
         
     def injectText(self, text):
-        print "inject text!"
+        print ("inject text!")
         self.advanceRows("", text, False)
         
         
@@ -243,10 +243,10 @@ class texteditor:
                     listener(self,event,msg)
                     #listener(event, msg)
                 except Exception as inst:
-                    print inst
+                    print (inst)
                     self.unregister(listener)
                     errmsg = "Exception in message dispatch: Handler '{0}' unregistered for event '{1}'  ".format(listener.func_name,event)
-                    print errmsg
+                    print (errmsg)
                     #self.logger.exception(errmsg)
              
     def unregister(self,listener):

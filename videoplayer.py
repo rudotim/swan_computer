@@ -3,8 +3,9 @@
 from time import sleep
 
 from playsound import playsound
+import pygame.locals
 import pygame.time
-from __builtin__ import False
+#from __builtin__ import False
 
 
 class videoplayer:
@@ -14,7 +15,7 @@ class videoplayer:
         playsound( audioFilePath )
         
     def playVideo(self, videoFilePath):
-        print "playing video " + videoFilePath
+        print ("playing video " + videoFilePath)
         
         FPS = 60
 
@@ -31,7 +32,7 @@ class videoplayer:
             for event in pygame.event.get():
                 if event.type == pygame.KEYDOWN:
                     if event.key == 13:   # enter
-                        print "enter!"
+                        print ("enter!")
                         movie.stop()
                         playing = False
                                         

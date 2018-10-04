@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/local/bin/python3
 
 import os
 import sys, getopt
@@ -25,12 +25,12 @@ def main( argv ):
     try:
         opts, args = getopt.getopt(argv,"h",["pi"])
     except getopt.GetoptError:
-        print 'error: {0}'.format(cmdString)
+        print ('error: {0}'.format(cmdString))
         sys.exit(2)
     for opt, arg in opts:
-        print opt
+        print (opt)
         if opt == '-h':
-            print 'game.py [-p <port>]'
+            print ('game.py [-p <port>]')
             sys.exit()
         elif opt in ("-p"):
             port = opt
@@ -50,7 +50,7 @@ def main( argv ):
         lost.init( usingPi )
         lost.mainLoop()
     except Exception:
-        print '^C received, shutting down the web server'
+        print ('^C received, shutting down the web server')
         
     server.stop()
     thread.join()

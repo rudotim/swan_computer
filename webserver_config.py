@@ -1,4 +1,6 @@
-from BaseHTTPServer import BaseHTTPRequestHandler
+#from BaseHTTPServer import BaseHTTPRequestHandler
+from http.server import BaseHTTPRequestHandler
+
 from os import curdir, sep
 import re
 import cgi
@@ -20,7 +22,7 @@ class webserver_config(BaseHTTPRequestHandler):
         
     # Handler for the GET requests
     def do_GET(self):
-        print self.path
+        print (self.path)
         if self.path=="/":
             self.path="/index.html"
         
@@ -68,7 +70,7 @@ class webserver_config(BaseHTTPRequestHandler):
             self.send_error(404,'File Not Found: %s' % self.path)
             
     def do_POST(self):
-        print "POST> " + self.path
+        print ("POST> " + self.path)
         if self.path=="/":
             self.path="/web/index.html"
         
@@ -84,21 +86,21 @@ class webserver_config(BaseHTTPRequestHandler):
             sendReply = False
             if None != re.search('/swan/audio/*', self.path):
                 ctype, pdict = cgi.parse_header(self.headers.getheader('content-type'))
-                print pdict
+                print (pdict)
                 
                 if ctype == 'application/json':
                     data_string = self.rfile.read(int(self.headers['Content-Length']))
                     #print data_string
                     jsonDict = json.loads( data_string )
                     
-                    print jsonDict
+                    print (jsonDict)
                     # alarm will have id
                     if 'res' in jsonDict:
-                        print "playing sound: [" + jsonDict['res'] + "]"
+                        print ("playing sound: [" + jsonDict['res'] + "]")
                         
                         self.controller.playAudio( jsonDict['res'] )
                     else:
-                        print "Failed to find 'file' in jsonDict"
+                        print ("Failed to find 'file' in jsonDict")
                     
                     sendReply = True
                     
@@ -111,10 +113,10 @@ class webserver_config(BaseHTTPRequestHandler):
                     
                     if 'res' in jsonDict :
                         # video will have name
-                        print "playing video__: " + jsonDict['res']
+                        print ("playing video__: " + jsonDict['res'])
                         self.controller.playVideo( jsonDict['res'] )
                     else:
-                        print "Could not find entry for 'res' in dictionary"
+                        print ("Could not find entry for 'res' in dictionary")
                     sendReply = True            
             if sendReply == True:
                 # Open the static file requested and send it
