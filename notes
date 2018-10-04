@@ -14,3 +14,7 @@ pexpect
 experimental video:
 opencv?
 pygame.Movie
+
+
+To run from cmd line:
+python 

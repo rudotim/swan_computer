@@ -18,17 +18,22 @@ from lostengine import lostengine
     
 def main( argv ):
     
+    port = 7777
+    
     usingPi = False
+    cmdString = 'game.py [-p <port>]'
     try:
         opts, args = getopt.getopt(argv,"h",["pi"])
     except getopt.GetoptError:
-        print 'error: test.py -i <inputfile> -o <outputfile>'
+        print 'error: {0}'.format(cmdString)
         sys.exit(2)
     for opt, arg in opts:
         print opt
         if opt == '-h':
-            print 'test.py -i <inputfile> -o <outputfile>'
+            print 'game.py [-p <port>]'
             sys.exit()
+        elif opt in ("-p"):
+            port = opt
         elif opt in ("--pi"):
             usingPi = True
     
@@ -36,7 +41,7 @@ def main( argv ):
         controller = gamecontroller.gamecontroller( usingPi )
         
         # start web server in separate thread
-        server = webserver(7777, controller)
+        server = webserver(port, controller)
         thread = Thread(target = server.start, args = [])
         thread.start()
         

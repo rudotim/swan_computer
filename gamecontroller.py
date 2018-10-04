@@ -34,6 +34,10 @@ class gamecontroller:
     def resetCountdown(self, seconds):
         self.countdownThread.resetCountdown(seconds)
         
+    def lostNumbersEntered(self):
+        self.countdownThread.lostNumbersEntered()
+
+        
     def stopCounting(self):
         self.countdownThread.stopCounting()
         

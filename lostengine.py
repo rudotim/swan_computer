@@ -110,6 +110,8 @@ class lostengine:
             self.controller.playVideo( "swan.mp4" )
         elif msg == "audio":
             self.controller.playAudio( "Code ok.mp3" )
+        elif msg == "4 8 15 16 23 42":
+            self.controller.lostNumbersEntered()
         elif msg == "count":
             self.controller.resetCountdown(10)
         elif msg == "countstop":

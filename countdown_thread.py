@@ -13,9 +13,20 @@ class countdown_thread:
     running = False
     callback = None
     
+    LOST_TIME = 60
+    
     def __init__(self, controller, callback=None):
         self.controller = controller
         self.callback = callback
+    
+    
+    def lostNumbersEntered(self):
+        if self.running == True:
+            print "You did it!  hooray!"
+            self.resetCountdown( self.LOST_TIME )
+        else:
+            print "Nothing was happening - why did you enter the numbers?"
+
     
     def resetCountdown(self, numSeconds):
         
