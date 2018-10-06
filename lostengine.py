@@ -27,7 +27,7 @@ class lostengine:
         
         # Check which frame buffer drivers are available
         # Start with fbcon since directfb hangs with composite output
-        drivers = ['directfb', 'fbcon', 'directfb', 'svgalib', 'xvfb', 'x11', 'dga', 'ggi', 'vgl', 'svgalib', 'aalib', 'windib', 'directx'] 
+        drivers = ['directfb', 'fbcon', 'xvfb', 'x11', 'dga', 'ggi', 'vgl', 'svgalib', 'aalib', 'windib', 'directx'] 
         #the last 2 are windows where we should not need the fb since it always has desktop, but lets keep them anyway...
         found = False
         for driver in drivers:

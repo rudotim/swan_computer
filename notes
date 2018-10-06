@@ -1,10 +1,47 @@
 
+
+Notes:
+
+Ended up not needing to rebuild the kernel.
+To get the framebuffer support to work, we had to install v86d or something
+so that  modprobe uvesafb would complete (check dmesg for error).
+
+With that, we installed mplayer to player videos in the framebuffer
+since pygame dropped support.  We can play the video (slow)
+but there is not yet any audio.
+
+Tried to get pulse audio working but it sucks.  Seems it wont work if you run
+it as a root user so I have to run as desmond.  Running as desmond outputs
+no sound (using .mp3, maybe different audio file?).  Running as desmond
+is not allowed for framebuffer video support.  wtf
+
+ to play audio/video in VirtualBox debian:
+ 
+ root:  
+    modprobe uvesafb
+
+play video/audio:
+    SDL_NOMNOUSE=1 mplayer -ao alsa -vo sdl swan.mp4
+    
+verify permissions of fb, tty and console:
+
+ls -l /dev/fb0
+ls -l /dev/tty*
+ls -l /dev/console
+
+add users/group:  https://unix.stackexchange.com/questions/58961/how-do-i-let-an-sdl-app-not-running-as-root-use-the-console
+
+
+    
+
 rpi apps:
 omxplayer
 
 python packages:
 
 core:
+    add --user to install as non-root user
+    
     pygame
         python3 -m pip install -U pygame --user
         test:
@@ -14,9 +51,8 @@ core:
         wget https://bootstrap.pypa.io/get-pip.py
         sudo python3.6 get-pip.py
 
-
     playsound:
-        pip3 install playsound
+        pip3 install playsound --user
         
 video:
 https://github.com/csik/pyomxplayer
@@ -29,3 +65,12 @@ pygame.Movie
 
 To run from cmd line:
 python 
+
+
+
+Rebuild Kernel:
+
+# get linux source
+apt-get source linux-image-$(uname -r)
+apt-get build-dep linux-image-$(uname -r)
+
