@@ -59,7 +59,7 @@ class webserver_config(BaseHTTPRequestHandler):
 
             if sendReply == True:
                 # Open the static file requested and send it
-                f = open(curdir + sep + "web" + sep + self.path) 
+                f = open(curdir + sep + "../webroot" + sep + self.path) 
                 self.send_response(200)
                 self.send_header('Content-type',mimetype)
                 self.end_headers()
@@ -72,7 +72,7 @@ class webserver_config(BaseHTTPRequestHandler):
     def do_POST(self):
         print ("POST> " + self.path)
         if self.path=="/":
-            self.path="/web/index.html"
+            self.path="/webroot/index.html"
         
         #if None != re.search('/swan/*', self.path):
         #    ctype, pdict = cgi.parse_header(self.headers.getheader('content-type'))

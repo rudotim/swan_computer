@@ -1,11 +1,12 @@
 
 from countdown_thread import countdown_thread
-from videoplayer import videoplayer
+from video.videoplayer import videoplayer
 
 
 class gamecontroller:
     
     countdownThread = None
+    textReceiver = None
     
     def __init__(self, usingPi):
         self.usingPi = usingPi
@@ -41,4 +42,10 @@ class gamecontroller:
     def stopCounting(self):
         self.countdownThread.stopCounting()
         
+    def receiveText(self, text):
+        print("receiveText> ", text)
+        self.textReceiver(text)
+        
+    def setTextReceiver(self, textReceiver):
+        self.textReceiver = textReceiver
         

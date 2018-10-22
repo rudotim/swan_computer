@@ -9,7 +9,7 @@ from pygame import font
 import threading
 import types
 
-from inputbox import inputbox
+from ui.inputbox import inputbox
 
 class texteditor:
     

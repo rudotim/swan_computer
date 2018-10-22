@@ -1,5 +1,5 @@
 
-from webserver_config import webserver_config
+from web.webserver_config import webserver_config
 
 #from BaseHTTPServer import HTTPServer
 from http.server import HTTPServer

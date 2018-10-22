@@ -1,5 +1,5 @@
 #!/usr/bin/python
-from BaseHTTPServer import BaseHTTPRequestHandler,HTTPServer
+from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 from os import curdir, sep
 
 PORT_NUMBER = 3333
@@ -52,13 +52,13 @@ try:
     #Create a web server and define the handler to manage the
     #incoming request
     server = HTTPServer(('', PORT_NUMBER), myHandler)
-    print 'Started httpserver on port ' , PORT_NUMBER
+    print ('Started httpserver on port ' , PORT_NUMBER)
     
     #Wait forever for incoming htto requests
     server.serve_forever()
     
-    print 'POST server_forever'
+    print ('POST server_forever')
 
 except KeyboardInterrupt:
-    print '^C received, shutting down the web server'
+    print ('^C received, shutting down the web server')
     server.socket.close()
