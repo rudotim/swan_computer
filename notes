@@ -2,6 +2,16 @@
 
 Notes:
 
+- writing text to the LOST console is not right.  It doesn't scroll the console lines
+    down properly.  
+
+- Added UNIX socket control for communicating to local web server.  We may want to 
+    see about making a connection to the basement RabbitMQ server for websocket usage
+    with LOST chat? 
+
+- SOMEtimes there is audio/video working.  A lot depends on how finicky VirtualBox
+    is when I open the VM.  Need to test on actual RPI to see how stable it is.
+
 Ended up not needing to rebuild the kernel.
 To get the framebuffer support to work, we had to install v86d or something
 so that  modprobe uvesafb would complete (check dmesg for error).
