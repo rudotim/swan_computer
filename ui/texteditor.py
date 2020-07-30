@@ -18,7 +18,7 @@ class texteditor:
     class PromptData:
         def __init__(self, prompt_font, prompt_str):
             self.prompt_str = prompt_str
-            self.prompt_box = prompt_font.render(self.prompt_str + " ", 1, (51, 204, 51))
+            self.prompt_box = prompt_font.render(self.prompt_str, 1, (51, 204, 51))
 
         def width(self):
             return self.prompt_box.get_width()
@@ -188,7 +188,7 @@ class texteditor:
 
         # add command line to the text history
         if text is None:
-            self.text_queue.appendleft( self.prompt.prompt_str + " " + self.current_text_line )
+            self.text_queue.appendleft( self.prompt.prompt_str + self.current_text_line )
             self.current_text_line = ""
         else:
             # output text
