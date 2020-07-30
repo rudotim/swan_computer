@@ -115,8 +115,10 @@ class lostengine:
         print ("You got event {0} with message {1}".format(event,msg))
         if msg == "lost":
             self.initiateLostNumbers()
+        elif msg == "":
+            pass
         elif msg == "txt":
-            self.editor.injectText("Hey It's me, Walt!")
+            self.editor.output_text("Hey It's me, Walt!")
         elif msg == "video":
             self.controller.playVideo( "swan.mp4" )
         elif msg == "audio":
@@ -128,8 +130,11 @@ class lostengine:
         elif msg == "countstop":
             self.controller.stopCounting()
         elif msg == "exit":
-            print ("exiting")
+            print("exiting")
             self.stop()
+        else:
+            self.editor.output_text("Syntax Error")
+
 
     def injectText(self, text):
         print("injecting text> ", text)

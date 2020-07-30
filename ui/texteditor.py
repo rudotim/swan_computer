@@ -18,8 +18,7 @@ class texteditor:
     class PromptData:
         def __init__(self, prompt_font, prompt_str):
             self.prompt_str = prompt_str
-            self.prompt_box = prompt_font.render(self.prompt_str, 1, (51, 204, 51))
-            self.post_padding = 10
+            self.prompt_box = prompt_font.render(self.prompt_str + " ", 1, (51, 204, 51))
 
         def width(self):
             return self.prompt_box.get_width()
@@ -29,6 +28,7 @@ class texteditor:
     current_text_line = ""
 
     input_queue = deque()
+    output_queue = deque()
 
     # size of cursor rectangle
     cursorRect = Rect(0, 0, 23, 8)
@@ -116,18 +116,19 @@ class texteditor:
 
     def process_control_char(self, ascii_num):
         if ascii_num == 13:   # enter
-            self.dispatch(msg=self.current_text_line)
+            command_txt = self.current_text_line
 
             # save to input queue
-            self.input_queue.appendleft( self.current_text_line )
+            self.input_queue.appendleft( command_txt )
 
             self.cursor_x = 0
             self.advance_rows()
 
+            self.dispatch(msg=command_txt)
             # todo: get result of input -> output
 
-            output_str = "Ok"
-            self.output_text(output_str)
+            #output_str = "Ok"
+            #self.output_text(output_str)
 
         elif ascii_num == 8:  # backspace
             self.current_text_line = self.current_text_line[0:len(self.current_text_line)-1]
@@ -167,11 +168,15 @@ class texteditor:
         t.daemon = True
         t.start()
 
-        
-    def output_text(self, text):
-        print("inject text!")
+
+    def inject_text(self, text):
         self.advance_rows(text, False)
-        
+
+
+    def output_text(self, text):
+        self.output_queue.appendleft( text )
+        self.advance_rows(text, False)
+
 
     def advance_rows(self, text=None, fromLocalUser = True):
 
@@ -186,7 +191,9 @@ class texteditor:
             self.text_queue.appendleft( self.prompt.prompt_str + " " + self.current_text_line )
             self.current_text_line = ""
         else:
-            self.text_queue.appendleft( text )
+            # output text
+            if self.output_queue.__len__() > 0:
+                self.text_queue.appendleft( self.output_queue.pop() )
 
         self.update_cursor_pos()
 
@@ -211,8 +218,8 @@ class texteditor:
 
         # draw command line text
         cmd_text_box = self.font.render( self.current_text_line, 1, (51, 204, 51))
-        dest_rec = (self.prompt.width() + self.prompt.post_padding, row * self.font_height, width, self.font_height)
-        self.cursor_x = self.prompt.width() + self.prompt.post_padding + cmd_text_box.get_width()
+        dest_rec = (self.prompt.width() , row * self.font_height, width, self.font_height)
+        self.cursor_x = self.prompt.width() + cmd_text_box.get_width()
         self.surface.blit(cmd_text_box, dest_rec)
 
         # ------------------------------
