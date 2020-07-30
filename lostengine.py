@@ -56,14 +56,18 @@ class lostengine:
             return pygame.display.set_mode(size, pygame.FULLSCREEN)
 
     def init(self, pi):
+
+        pygame.init()
+
         if pi == True:
             self.screen = self.onPi()
         else:
             self.screen = pygame.display.set_mode((640, 480)) # , FULLSCREEN) DO NOT USE THIS UNLESS YOU HAVE EXIT
-           
+
         # Clear the screen to start
-        self.screen.fill((150, 150, 150))        
-        
+        #self.screen.fill((150, 150, 150))
+        self.screen.fill((0, 0, 0))
+
         pygame.font.init()
         
         pygame.display.set_caption('Lost Emulator')
@@ -80,10 +84,11 @@ class lostengine:
         self.screen.blit(self.background, (0, 0))
         pygame.display.update()
         #pygame.display.flip()
-        
-        self.editor = texteditor( font, self.background, self.controller ) 
+
+        dimensions = Rect(0, 0, 640, 480)
+        self.editor = texteditor( self.screen, dimensions, font, self.background, self.controller )
         self.editor.register( self.rcvCommand )
-        
+
         self.mainLoop()
         
     def mainLoop(self):
@@ -93,13 +98,8 @@ class lostengine:
                 if event.type == pygame.QUIT:
                     return
                 if event.type == pygame.KEYDOWN:
-                    self.editor.processNewChar( event.key )                
-            
-            # get text boxes from editor
-            lines = self.editor.getTextAreas()
-            for line in lines:
-                line.draw()
-                        
+                    self.editor.process_new_char( event.key)
+
             self.screen.blit(self.background, (0, 0))
             pygame.display.update()
             #pygame.display.flip()

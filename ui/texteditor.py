@@ -9,42 +9,50 @@ from pygame import font
 import threading
 import types
 
-from ui.inputbox import inputbox
+from ui.text_editor_specs import text_editor_specs
+from collections import deque
+
 
 class texteditor:
-    
-    maxRows = 6
-    currRow = -1
-    
-    promptStr = ">:"
-    
-    maxlen = 50
-    textboxes = []
-    
-    boxheight = 0
+
+    # text data
+    text_queue = deque()
+    current_text_line = ""
+
+    # size of cursor rectangle
     cursorRect = Rect(0, 0, 23, 8)
     
+    currRow = -1
+
     blinkCursor = False
-    
-    inputbox = None 
-    
-    def __init__(self, font, surface, controller):
+
+    prompt_str = ":>"
+
+    def __init__(self, screen, dimensions, font, surface, controller):
         self.listeners = {}
-        
+
+        self.screen = screen
+        self.dimensions = dimensions
+
         self.controller = controller
         
         self.font = font
         self.surface = surface
-        self.boxheight = 40
+
+        self.font_height = 0
+        self.cursor_x = 0
+        self.init_font_data()
+
+        self.specs = text_editor_specs()
         
-        self.advanceRows( self.promptStr, "" )
-        self.moveCursor(self.inputbox)
-        
-        self.startCursor()
+        self.start_cursor()
         
         
-        
-        
+    def init_font_data(self):
+        box = self.font.render("a", 0, (0, 0, 0))
+        self.font_height = box.get_height()
+
+
     def golost(self):
         # show box
         box = self.font.render( "Enter the numbers!", 1, (255, 255, 255))
@@ -75,32 +83,36 @@ class texteditor:
         
         
         
-        
-        
-    def processNewChar(self, ascii_num): 
-        #print "ascii: " + str(ascii_num)
-        #print "char: " + str(chr(ascii_num))
+    # ------------------------------
+    # Text Processing 
+    # ------------------------------
+
+    def process_new_char(self, ascii_num):
         if ascii_num >= 255:
             return
         
-        if self.isAsciiChar(ascii_num):
-            self.inputbox.append( chr(ascii_num) )
+        if self.is_ascii_char(ascii_num):
+
+            self.current_text_line += chr( ascii_num )
+            self.redraw()
         else:
-            self.processControlChar(ascii_num)
-        
-        self.moveCursor(self.inputbox)
-        
-    def processControlChar(self, ascii_num):
+            self.process_control_char(ascii_num)
+
+        self.redraw()
+        self.update_cursor_pos()
+
+
+    def process_control_char(self, ascii_num):
         if ascii_num == 13:   # enter
-            self.dispatch(msg=self.inputbox.text)            
-            self.advanceRows( self.promptStr, "" )
-            
+            self.dispatch(msg=self.current_text_line)
+            self.cursor_x = 0
+            self.advance_rows("")
+
         elif ascii_num == 8:  # backspace
-            # backspace
-            self.inputbox.backspace()
+            self.current_text_line = self.current_text_line[0:len(self.current_text_line)-1]
         else:
             # ?
-            print ("Don't know key " + str(ascii_num))
+            print("Don't know key " + str(ascii_num))
         
         
         
@@ -115,40 +127,32 @@ class texteditor:
         
         
         
-    def startCursor(self):
-        print ("Starting cursor")        
+    def start_cursor(self):
         self.blinkCursor = True
-        self.makeCursorBlink()
+        self.update_cursor_pos()
+        self.make_cursor_blink()
         
-    def stopCursor(self):
-        print ("Stopping cursor")
+    def stop_cursor(self):
         self.blinkCursor = False
-        self.makeCursorBlink()
+        self.make_cursor_blink()
         
-    def moveCursor(self, inputbox):
-        #print "moving cursor to inputbox"
-        self.eraseBox( self.cursorRect )
-        
-        curPos = inputbox.getCursorPos() 
-        self.cursorRect.x = curPos[0]
-        self.cursorRect.y = curPos[1]
-        
-        #self.cursorRect.x = inputbox.cursorX # inputbox.getX() + inputbox.getWidth()
-        ##print "rect.x,y: " + str(inputbox.cursorX) + ", " + str(inputbox.cursorY)
-        #self.cursorRect.y = inputbox.cursorY # (inputbox.row * self.boxheight) + self.boxheight - self.cursorRect.height - 8
-        
-    def makeCursorBlink(self):
-        #print "blink!"
+    def update_cursor_pos(self):
+        self.erase_box( self.cursorRect)
+        self.cursorRect = Rect(
+            self.cursor_x,
+            (self.text_queue.__len__()+1) * self.font_height, 23, 8)
+
+
+    def make_cursor_blink(self):
         if self.blinkCursor == True:
             # draw cursor at current position
             pygame.draw.rect( self.surface, (51, 225, 51), self.cursorRect)
         else:
-            #print "Stopping the blink"
             # erase cursor at last position
-            self.eraseBox( self.cursorRect )
-            
+            self.erase_box( self.cursorRect)
+
         self.blinkCursor = not self.blinkCursor
-        t = threading.Timer(0.4, self.makeCursorBlink)
+        t = threading.Timer(0.4, self.make_cursor_blink)
         t.daemon = True
         t.start()
         
@@ -161,63 +165,70 @@ class texteditor:
         
         
         
-    def injectText(self, text):
+    def inject_text(self, text):
         print ("inject text!")
-        self.advanceRows("", text, False)
+        self.advance_rows(text, False)
         
         
         
-    def advanceRows(self, prompt, text, showCursor = True ):
-        
-        boxes = self.getTextAreas()
-        
-        if self.currRow >= (self.maxRows-1):
-            for box in boxes:
-                box.erase()
-                
-                # shift up by one row
-                box.shiftUp()
-                    
-            # toss first box
-            self.textboxes.pop(0)
+    
+    def advance_rows(self, text, fromLocalUser = True):
+
+        if self.currRow >= (self.specs.maxRows-1):
+            self.text_queue.pop()
         else:
             self.currRow += 1
-            
-        # add newest input box
-        self.inputbox = inputbox( prompt, text, 0, self.currRow * self.boxheight, self.font, self.surface )
-        self.textboxes.append( self.inputbox )
-        
-        #if showCursor == True:
-        #    self.moveCursor( self.inputbox.getWidth(), self.currRow )
-        
-        
-        
+
+        self.text_queue.appendleft( self.current_text_line )
+        self.current_text_line = ""
+        self.update_cursor_pos()
+
+
+    def redraw(self):
+        row = 0
+        width = 640
+
+        self.surface.fill( pygame.Color("black") )
+        # draw history lines
+        for t in reversed(self.text_queue):
+            box = self.font.render( t, 1, (51, 204, 51, 255))
+
+            dest_rec = (0, row * self.font_height, width, self.font_height)
+            self.surface.blit( box, dest_rec )
+
+            row += 1
+
+        # draw command line text
+        box = self.font.render( self.current_text_line, 1, (51, 204, 51))
+        dest_rec = (0, row * self.font_height, width, self.font_height)
+        self.cursor_x = box.get_width()
+        self.surface.blit(box, dest_rec)
+
         # ------------------------------
         # Utility Functions
         # ------------------------------
         
-    def eraseBox(self, rect):
-        #print "erasin " + str(rect.x) + ", " + str(rect.y) + " to " + str(rect.x + rect.w) + ", " + str(rect.y + rect.h)
+    def erase_box(self, rect):
         self.surface.fill((0, 0, 0), rect )
-        
-    def isAsciiChar(self, ascii_num):
-        if ascii_num >= 32 and ascii_num <= 126:
+
+    @staticmethod
+    def is_ascii_char(ascii_num):
+        if 32 <= ascii_num <= 126:
             return True
         return False
-    
-    def isTooLong(self, cmdstr ):
-        if len(cmdstr) >= self.maxlen:
+
+
+    def is_too_long(self, cmdstr):
+        if len(cmdstr) >= self.specs.maxLen:
             return True
         return False
         
-    def getTextAreas(self):            
-        return self.textboxes
-        
-        
-        # ----------------------------------
-        # Event Handling
-        # ----------------------------------
-        
+
+    # ----------------------------------
+    # Event Handling
+    # ----------------------------------
+
+
     def register(self,listener,events=None):
         """
         register a listener function
@@ -252,6 +263,3 @@ class texteditor:
     def unregister(self,listener):
         """ unregister listener function """
         del self.listeners[listener]             
-
-        
-    
