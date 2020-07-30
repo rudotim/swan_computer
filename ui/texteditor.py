@@ -44,7 +44,8 @@ class texteditor:
         self.init_font_data()
 
         self.specs = text_editor_specs()
-        
+
+        self.redraw()
         self.start_cursor()
         
         
@@ -198,11 +199,18 @@ class texteditor:
 
             row += 1
 
+        prompt_width = 30
+        space_width = 20
+        # draw prompt
+        prompt_box = self.font.render( self.prompt_str, 1, (51, 204, 51))
+        dest_rec = (0, row * self.font_height, prompt_width, self.font_height)
+        self.surface.blit(prompt_box, dest_rec)
+
         # draw command line text
-        box = self.font.render( self.current_text_line, 1, (51, 204, 51))
-        dest_rec = (0, row * self.font_height, width, self.font_height)
-        self.cursor_x = box.get_width()
-        self.surface.blit(box, dest_rec)
+        cmd_text_box = self.font.render( self.current_text_line, 1, (51, 204, 51))
+        dest_rec = (prompt_width + space_width, row * self.font_height, width, self.font_height)
+        self.cursor_x = prompt_width + space_width + cmd_text_box.get_width()
+        self.surface.blit(cmd_text_box, dest_rec)
 
         # ------------------------------
         # Utility Functions
