@@ -28,6 +28,8 @@ class texteditor:
     text_queue = deque()
     current_text_line = ""
 
+    input_queue = deque()
+
     # size of cursor rectangle
     cursorRect = Rect(0, 0, 23, 8)
     
@@ -115,8 +117,17 @@ class texteditor:
     def process_control_char(self, ascii_num):
         if ascii_num == 13:   # enter
             self.dispatch(msg=self.current_text_line)
+
+            # save to input queue
+            self.input_queue.appendleft( self.current_text_line )
+
             self.cursor_x = 0
-            self.advance_rows("")
+            self.advance_rows()
+
+            # todo: get result of input -> output
+
+            output_str = "Ok"
+            self.output_text(output_str)
 
         elif ascii_num == 8:  # backspace
             self.current_text_line = self.current_text_line[0:len(self.current_text_line)-1]
@@ -144,7 +155,7 @@ class texteditor:
 
 
     def make_cursor_blink(self):
-        if self.blinkCursor == True:
+        if self.blinkCursor:
             # draw cursor at current position
             pygame.draw.rect( self.surface, (51, 225, 51), self.cursorRect)
         else:
@@ -157,20 +168,26 @@ class texteditor:
         t.start()
 
         
-    def inject_text(self, text):
-        print ("inject text!")
+    def output_text(self, text):
+        print("inject text!")
         self.advance_rows(text, False)
         
 
-    def advance_rows(self, text, fromLocalUser = True):
+    def advance_rows(self, text=None, fromLocalUser = True):
 
+        # If the history grows too long, trim it
         if self.currRow >= (self.specs.maxRows-1):
             self.text_queue.pop()
         else:
             self.currRow += 1
 
-        self.text_queue.appendleft( self.current_text_line )
-        self.current_text_line = ""
+        # add command line to the text history
+        if text is None:
+            self.text_queue.appendleft( self.prompt.prompt_str + " " + self.current_text_line )
+            self.current_text_line = ""
+        else:
+            self.text_queue.appendleft( text )
+
         self.update_cursor_pos()
 
 
