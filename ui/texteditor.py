@@ -15,6 +15,15 @@ from collections import deque
 
 class texteditor:
 
+    class PromptData:
+        def __init__(self, prompt_font, prompt_str):
+            self.prompt_str = prompt_str
+            self.prompt_box = prompt_font.render(self.prompt_str, 1, (51, 204, 51))
+            self.post_padding = 10
+
+        def width(self):
+            return self.prompt_box.get_width()
+
     # text data
     text_queue = deque()
     current_text_line = ""
@@ -26,10 +35,10 @@ class texteditor:
 
     blinkCursor = False
 
-    prompt_str = ":>"
-
     def __init__(self, screen, dimensions, font, surface, controller):
         self.listeners = {}
+
+        self.prompt = self.PromptData(font, ":>")
 
         self.screen = screen
         self.dimensions = dimensions
@@ -115,28 +124,18 @@ class texteditor:
             # ?
             print("Don't know key " + str(ascii_num))
         
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
+
     def start_cursor(self):
         self.blinkCursor = True
         self.update_cursor_pos()
         self.make_cursor_blink()
-        
+
+
     def stop_cursor(self):
         self.blinkCursor = False
         self.make_cursor_blink()
-        
+
+
     def update_cursor_pos(self):
         self.erase_box( self.cursorRect)
         self.cursorRect = Rect(
@@ -156,23 +155,13 @@ class texteditor:
         t = threading.Timer(0.4, self.make_cursor_blink)
         t.daemon = True
         t.start()
-        
-        
-        
-        
-        
-        
-        
-        
-        
+
         
     def inject_text(self, text):
         print ("inject text!")
         self.advance_rows(text, False)
         
-        
-        
-    
+
     def advance_rows(self, text, fromLocalUser = True):
 
         if self.currRow >= (self.specs.maxRows-1):
@@ -199,17 +188,14 @@ class texteditor:
 
             row += 1
 
-        prompt_width = 30
-        space_width = 20
         # draw prompt
-        prompt_box = self.font.render( self.prompt_str, 1, (51, 204, 51))
-        dest_rec = (0, row * self.font_height, prompt_width, self.font_height)
-        self.surface.blit(prompt_box, dest_rec)
+        dest_rec = (0, row * self.font_height, self.prompt.width(), self.font_height)
+        self.surface.blit(self.prompt.prompt_box, dest_rec)
 
         # draw command line text
         cmd_text_box = self.font.render( self.current_text_line, 1, (51, 204, 51))
-        dest_rec = (prompt_width + space_width, row * self.font_height, width, self.font_height)
-        self.cursor_x = prompt_width + space_width + cmd_text_box.get_width()
+        dest_rec = (self.prompt.width() + self.prompt.post_padding, row * self.font_height, width, self.font_height)
+        self.cursor_x = self.prompt.width() + self.prompt.post_padding + cmd_text_box.get_width()
         self.surface.blit(cmd_text_box, dest_rec)
 
         # ------------------------------
