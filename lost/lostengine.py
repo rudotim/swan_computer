@@ -6,7 +6,8 @@ from time import sleep
 import pygame
 from pygame.locals import *
 
-from ui.texteditor import texteditor
+from ui.texteditor import TextEditor
+
 
 class lostengine:
            
@@ -18,6 +19,9 @@ class lostengine:
         self.controller = controller
         self.shutdownCallback = shutdownCallback
         self.controller.setTextReceiver( self.injectText )
+
+        self.background = None
+        self.editor = None
         
     def onPi(self):
         print ("On RPI")
@@ -86,7 +90,7 @@ class lostengine:
         #pygame.display.flip()
 
         dimensions = Rect(0, 0, 640, 480)
-        self.editor = texteditor( self.screen, dimensions, font, self.background, self.controller )
+        self.editor = TextEditor( dimensions, font, self.background, self.controller)
         self.editor.register( self.rcvCommand )
 
         self.mainLoop()
@@ -110,7 +114,8 @@ class lostengine:
         print("stopping UI")
         self.running = False
         self.shutdownCallback()
-        
+
+
     def rcvCommand(self,sender,event,msg=None):
         print ("You got event {0} with message {1}".format(event,msg))
         if msg == "lost":
@@ -140,7 +145,7 @@ class lostengine:
         print("injecting text> ", text)
         self.editor.injectText( text )
 
+
     def initiateLostNumbers(self):
         print ("You gots to imput da numbaz!")
         self.editor.golost()
-        

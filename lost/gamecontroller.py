@@ -1,5 +1,5 @@
 
-from countdown_thread import countdown_thread
+from utils.countdown_thread import countdown_thread
 from video.videoplayer import videoplayer
 
 
