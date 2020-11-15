@@ -13,7 +13,7 @@ from ui.text_editor_specs import text_editor_specs
 from collections import deque
 
 
-class texteditor:
+class TextEditor:
 
     class PromptData:
         def __init__(self, prompt_font, prompt_str):
@@ -37,32 +37,37 @@ class texteditor:
 
     blinkCursor = False
 
-    def __init__(self, screen, dimensions, font, surface, controller):
+    def __init__(self, dimensions, font, surface, controller):
         self.listeners = {}
 
-        self.prompt = self.PromptData(font, ":>")
-
-        self.screen = screen
+        # Rect defining the bounds of this text editor
         self.dimensions = dimensions
 
         self.controller = controller
-        
+
+        # pygame font object
         self.font = font
+
+        # pygame background surface
         self.surface = surface
 
-        self.font_height = 0
+        self.font_height = self.get_font_height()
         self.cursor_x = 0
-        self.init_font_data()
 
+        # text editor options
         self.specs = text_editor_specs()
+
+        self.prompt = self.PromptData(font, ":>")
 
         self.redraw()
         self.start_cursor()
         
         
-    def init_font_data(self):
+    def get_font_height(self):
+        """ Determine line height of this font
+        """
         box = self.font.render("a", 0, (0, 0, 0))
-        self.font_height = box.get_height()
+        return box.get_height()
 
 
     def golost(self):
@@ -111,7 +116,7 @@ class texteditor:
             self.process_control_char(ascii_num)
 
         self.redraw()
-        self.update_cursor_pos()
+        #self.update_cursor_pos()
 
 
     def process_control_char(self, ascii_num):
@@ -121,14 +126,13 @@ class texteditor:
             # save to input queue
             self.input_queue.appendleft( command_txt )
 
+            # reset cursor to start of line
             self.cursor_x = 0
-            self.advance_rows()
+
+            # advance the rows down the screen
+            self.advance_rows_with_text()
 
             self.dispatch(msg=command_txt)
-            # todo: get result of input -> output
-
-            #output_str = "Ok"
-            #self.output_text(output_str)
 
         elif ascii_num == 8:  # backspace
             self.current_text_line = self.current_text_line[0:len(self.current_text_line)-1]
@@ -139,7 +143,6 @@ class texteditor:
 
     def start_cursor(self):
         self.blinkCursor = True
-        self.update_cursor_pos()
         self.make_cursor_blink()
 
 
@@ -148,11 +151,10 @@ class texteditor:
         self.make_cursor_blink()
 
 
-    def update_cursor_pos(self):
+    def update_cursor_pos(self, x, y):
         self.erase_box( self.cursorRect)
         self.cursorRect = Rect(
-            self.cursor_x,
-            (self.text_queue.__len__()+1) * self.font_height, 23, 8)
+            x, y, 23, 8)
 
 
     def make_cursor_blink(self):
@@ -170,64 +172,92 @@ class texteditor:
 
 
     def inject_text(self, text):
-        self.advance_rows(text, False)
+        self.advance_rows_with_text(text, False)
 
 
     def output_text(self, text):
         self.output_queue.appendleft( text )
-        self.advance_rows(text, False)
+        self.advance_rows_with_text(text, False)
 
 
-    def advance_rows(self, text=None, fromLocalUser = True):
-
-        # If the history grows too long, trim it
-        if self.currRow >= (self.specs.maxRows-1):
-            self.text_queue.pop()
-        else:
-            self.currRow += 1
+    def advance_rows_with_text(self, text=None, fromLocalUser = True):
 
         # add command line to the text history
         if text is None:
             self.text_queue.appendleft( self.prompt.prompt_str + self.current_text_line )
+            #self.text_queue.appendleft( self.current_text_line )
             self.current_text_line = ""
         else:
             # output text
             if self.output_queue.__len__() > 0:
                 self.text_queue.appendleft( self.output_queue.pop() )
 
-        self.update_cursor_pos()
+
+    def draw_prompt(self, row):
+        dest_rec = (0, row * self.font_height, self.prompt.width(), self.font_height)
+        self.surface.blit(self.prompt.prompt_box, dest_rec)
 
 
     def redraw(self):
         row = 0
-        width = 640
 
         self.surface.fill( pygame.Color("black") )
-        # draw history lines
         for t in reversed(self.text_queue):
-            box = self.font.render( t, 1, (51, 204, 51, 255))
+            row = self.draw_lines( row, t, False )
 
-            dest_rec = (0, row * self.font_height, width, self.font_height)
-            self.surface.blit( box, dest_rec )
+        self.draw_lines(row, self.current_text_line, True)
 
-            row += 1
 
-        # draw prompt
-        dest_rec = (0, row * self.font_height, self.prompt.width(), self.font_height)
-        self.surface.blit(self.prompt.prompt_box, dest_rec)
+    def draw_lines(self, row, text, show_prompt=False):
+        new_row = row
+        text_len = len(text)
 
-        # draw command line text
-        cmd_text_box = self.font.render( self.current_text_line, 1, (51, 204, 51))
-        dest_rec = (self.prompt.width() , row * self.font_height, width, self.font_height)
-        self.cursor_x = self.prompt.width() + cmd_text_box.get_width()
-        self.surface.blit(cmd_text_box, dest_rec)
+        # keep track of whether or not prompt is present
+        # include prompt chars in check for overflow
 
-        # ------------------------------
-        # Utility Functions
-        # ------------------------------
+        prompt_width = self.prompt.width() if show_prompt else 0
+        if show_prompt:
+            self.draw_prompt(new_row)
+            text_len += len(self.prompt.prompt_str)
+        if text_len >= self.specs.maxCols:
+            # split text
+            start = 0
+            end = self.specs.maxCols - (0 if not show_prompt else len(self.prompt.prompt_str))
+            while start <= text_len:
+                txt = text[start:end]
+                print("rendering multiline>", txt)
+                start = end
+                end += self.specs.maxCols
+
+                cmd_text_box = self.font.render( txt, 1, (51, 204, 51))
+                dest_rec = (prompt_width if row == new_row else 0,
+                    new_row * self.font_height,
+                    self.dimensions[2],
+                    self.font_height)
+                self.cursor_x = prompt_width if row == new_row else 0 + cmd_text_box.get_width()
+                self.surface.blit(cmd_text_box, dest_rec)
+                self.update_cursor_pos(self.cursor_x, (new_row + 1) * self.font_height)
+
+                new_row += 1
+                text_len = len(text)
+        else:
+            # draw command line text
+            cmd_text_box = self.font.render( text, 1, (51, 204, 51))
+            dest_rec = (prompt_width , new_row * self.font_height, self.dimensions[2], self.font_height)
+            self.surface.blit(cmd_text_box, dest_rec)
+            self.cursor_x = self.prompt.width() + cmd_text_box.get_width()
+            self.update_cursor_pos( self.cursor_x, (new_row+1) * self.font_height )
+            new_row += 1
+
+        return new_row
+
+    # ------------------------------
+    # Utility Functions
+    # ------------------------------
         
     def erase_box(self, rect):
-        self.surface.fill((0, 0, 0), rect )
+        #self.surface.fill((255, 0, 0), rect )
+        pass
 
     @staticmethod
     def is_ascii_char(ascii_num):
@@ -256,7 +286,7 @@ class texteditor:
         listener : external listener function
         events  : tuple or list of relevant events (default=None)
         """
-        if events is not None and type(events) not in (types.TupleType,types.ListType):
+        if events is not None and type(events) not in (types.TupleType, types.ListType):
             events = (events,)
               
         self.listeners[listener] = events
@@ -269,15 +299,15 @@ class texteditor:
             if events is None or event is None or event in events:
 
                 try:
-                    listener(self,event,msg)
+                    listener(self, event, msg)
                     #listener(event, msg)
                 except Exception as inst:
                     print (inst)
                     self.unregister(listener)
-                    errmsg = "Exception in message dispatch: Handler '{0}' unregistered for event '{1}'  ".format(listener.func_name,event)
+                    errmsg = "Exception in message dispatch: Handler '{0}' unregistered for event '{1}'  ".format(listener.func_name, event)
                     print (errmsg)
                     #self.logger.exception(errmsg)
              
-    def unregister(self,listener):
+    def unregister(self, listener):
         """ unregister listener function """
         del self.listeners[listener]             
