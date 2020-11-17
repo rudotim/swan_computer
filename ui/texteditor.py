@@ -62,13 +62,11 @@ class TextEditor:
         self.redraw()
         self.start_cursor()
         
-        
     def get_font_height(self):
         """ Determine line height of this font
         """
         box = self.font.render("a", 0, (0, 0, 0))
         return box.get_height()
-
 
     def golost(self):
         # show box
@@ -116,8 +114,6 @@ class TextEditor:
             self.process_control_char(ascii_num)
 
         self.redraw()
-        #self.update_cursor_pos()
-
 
     def process_control_char(self, ascii_num):
         if ascii_num == 13:   # enter
@@ -139,23 +135,19 @@ class TextEditor:
         else:
             # ?
             print("Don't know key " + str(ascii_num))
-        
 
     def start_cursor(self):
         self.blinkCursor = True
         self.make_cursor_blink()
 
-
     def stop_cursor(self):
         self.blinkCursor = False
         self.make_cursor_blink()
-
 
     def update_cursor_pos(self, x, y):
         self.erase_box( self.cursorRect)
         self.cursorRect = Rect(
             x, y, 23, 8)
-
 
     def make_cursor_blink(self):
         if self.blinkCursor:
@@ -170,33 +162,27 @@ class TextEditor:
         t.daemon = True
         t.start()
 
-
     def inject_text(self, text):
         self.advance_rows_with_text(text, False)
-
 
     def output_text(self, text):
         self.output_queue.appendleft( text )
         self.advance_rows_with_text(text, False)
-
 
     def advance_rows_with_text(self, text=None, fromLocalUser = True):
 
         # add command line to the text history
         if text is None:
             self.text_queue.appendleft( self.prompt.prompt_str + self.current_text_line )
-            #self.text_queue.appendleft( self.current_text_line )
             self.current_text_line = ""
         else:
             # output text
             if self.output_queue.__len__() > 0:
                 self.text_queue.appendleft( self.output_queue.pop() )
 
-
     def draw_prompt(self, row):
         dest_rec = (0, row * self.font_height, self.prompt.width(), self.font_height)
         self.surface.blit(self.prompt.prompt_box, dest_rec)
-
 
     def redraw(self):
         row = 0
@@ -206,7 +192,6 @@ class TextEditor:
             row = self.draw_lines( row, t, False )
 
         self.draw_lines(row, self.current_text_line, True)
-
 
     def draw_lines(self, row, text, show_prompt=False):
         new_row = row
@@ -225,7 +210,7 @@ class TextEditor:
             end = self.specs.maxCols - (0 if not show_prompt else len(self.prompt.prompt_str))
             while start <= text_len:
                 txt = text[start:end]
-                print("rendering multiline>", txt)
+#                print("rendering multiline>", txt)
                 start = end
                 end += self.specs.maxCols
 
@@ -265,19 +250,16 @@ class TextEditor:
             return True
         return False
 
-
     def is_too_long(self, cmdstr):
         if len(cmdstr) >= self.specs.maxLen:
             return True
         return False
-        
 
     # ----------------------------------
     # Event Handling
     # ----------------------------------
 
-
-    def register(self,listener,events=None):
+    def register(self, listener, events=None):
         """
         register a listener function
          
@@ -290,24 +272,19 @@ class TextEditor:
             events = (events,)
               
         self.listeners[listener] = events
-         
-         
-         
-    def dispatch(self,event=None, msg=None):
+
+    def dispatch(self, event=None, msg=None):
         """notify listeners """
-        for listener,events in self.listeners.items():
+        for listener, events in self.listeners.items():
             if events is None or event is None or event in events:
 
                 try:
                     listener(self, event, msg)
-                    #listener(event, msg)
                 except Exception as inst:
-                    print (inst)
+                    print(inst)
                     self.unregister(listener)
-                    errmsg = "Exception in message dispatch: Handler '{0}' unregistered for event '{1}'  ".format(listener.func_name, event)
-                    print (errmsg)
-                    #self.logger.exception(errmsg)
              
     def unregister(self, listener):
         """ unregister listener function """
-        del self.listeners[listener]             
+        if self.listeners[listener]:
+            del self.listeners[listener]

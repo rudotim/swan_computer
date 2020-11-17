@@ -9,21 +9,21 @@ from pygame.locals import *
 from ui.texteditor import TextEditor
 
 
-class lostengine:
+class SwanEngine:
            
     running = True
     screen = None
     shutdownCallback = None
     
-    def __init__(self, controller, shutdownCallback):
+    def __init__(self, controller, shutdown_callback):
         self.controller = controller
-        self.shutdownCallback = shutdownCallback
-        self.controller.setTextReceiver( self.injectText )
+        self.shutdownCallback = shutdown_callback
+        self.controller.setTextReceiver(self.inject_text)
 
         self.background = None
         self.editor = None
         
-    def onPi(self):
+    def on_pi(self):
         print ("On RPI")
         disp_no = os.getenv("DISPLAY")
         if disp_no:
@@ -42,13 +42,12 @@ class lostengine:
             if not os.getenv('SDL_VIDEODRIVER'):
                 os.putenv('SDL_VIDEODRIVER', driver)
             try:
-                    print("Driver: "+driver)
-                    pygame.display.init()
+                print("Driver: " + driver)
+                pygame.display.init()
             except pygame.error:
-                    print ('Driver: {0} failed.'.format(driver))
-                    continue
+                print('Driver: {0} failed.'.format(driver))
+                continue
             found = True
-            print("this one works.")
             break
         
         if not found:
@@ -63,8 +62,8 @@ class lostengine:
 
         pygame.init()
 
-        if pi == True:
-            self.screen = self.onPi()
+        if pi:
+            self.screen = self.on_pi()
         else:
             self.screen = pygame.display.set_mode((640, 480)) # , FULLSCREEN) DO NOT USE THIS UNLESS YOU HAVE EXIT
 
@@ -91,13 +90,13 @@ class lostengine:
 
         dimensions = Rect(0, 0, 640, 480)
         self.editor = TextEditor( dimensions, font, self.background, self.controller)
-        self.editor.register( self.rcvCommand )
+        self.editor.register(self.receive_command)
 
-        self.mainLoop()
+        self.main_loop()
         
-    def mainLoop(self):
+    def main_loop(self):
         # Event loop
-        while self.running == True:
+        while self.running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     return
@@ -115,19 +114,18 @@ class lostengine:
         self.running = False
         self.shutdownCallback()
 
-
-    def rcvCommand(self,sender,event,msg=None):
-        print ("You got event {0} with message {1}".format(event,msg))
+    def receive_command(self, sender, event, msg=None):
+        print("You got event {0} with message {1}".format(event, msg))
         if msg == "lost":
-            self.initiateLostNumbers()
+            self.initiate_lost_numbers()
         elif msg == "":
             pass
         elif msg == "txt":
             self.editor.output_text("Hey It's me, Walt!")
         elif msg == "video":
-            self.controller.playVideo( "swan.mp4" )
+            self.controller.playVideo("swan.mp4")
         elif msg == "audio":
-            self.controller.playAudio( "Code ok.mp3" )
+            self.controller.playAudio("Code ok.mp3")
         elif msg == "4 8 15 16 23 42":
             self.controller.lostNumbersEntered()
         elif msg == "count":
@@ -140,12 +138,10 @@ class lostengine:
         else:
             self.editor.output_text("Syntax Error")
 
-
-    def injectText(self, text):
+    def inject_text(self, text):
         print("injecting text> ", text)
-        self.editor.injectText( text )
+        self.editor.inject_text(text)
 
-
-    def initiateLostNumbers(self):
+    def initiate_lost_numbers(self):
         print ("You gots to imput da numbaz!")
         self.editor.golost()

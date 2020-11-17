@@ -5,7 +5,7 @@ import sys, getopt
 #from gamecontroller import gamecontroller
 from lost import gamecontroller
 
-from lost.lostengine import lostengine
+from lost.swanengine import SwanEngine
 import traceback
 
 import signal
@@ -18,7 +18,6 @@ threadSock = None
 lost = None
 
 
-    
 def main( argv ):
     
     global sock_comms
@@ -27,40 +26,40 @@ def main( argv ):
     
     port = 7777
     
-    usingPi = False
-    cmdString = 'swan.py [-p <port>]'
+    using_pi = False
+    cmd_string = 'swan.py [-p <port>]'
     try:
-        opts, args = getopt.getopt(argv,"h",["pi"])
+        opts, args = getopt.getopt(argv, "h", ["pi"])
     except getopt.GetoptError:
-        print ('error: {0}'.format(cmdString))
+        print('error: {0}'.format(cmd_string))
         sys.exit(2)
     for opt, arg in opts:
         print (opt)
         if opt == '-h':
-            print ('swan.py [-p <port>]')
+            print('swan.py [-p <port>]')
             sys.exit()
-        elif opt in ("-p"):
+        elif opt in "-p":
             port = opt
-        elif opt in ("--pi"):
-            usingPi = True
+        elif opt in "--pi":
+            using_pi = True
     
     signal.signal(signal.SIGINT, signal_handler)
 
-    #controller = gamecontroller.gamecontroller(usingPi)
+    #controller = gamecontroller.gamecontroller(using_pi)
 
     #sock_comms = socket_comms('/tmp/uds_socket', controller);
     #threadSock = Thread(target=sock_comms.start, args=[])
     #threadSock.start()
 
     #lost = lostengine(controller, quitApp );
-    #lost.init( usingPi )
+    #lost.init( using_pi )
 
 
-    #threadUI = Thread(target=lost.init, args=[ usingPi ])
+    #threadUI = Thread(target=lost.init, args=[ using_pi ])
     #threadUI.start()
 
     try:
-        controller = gamecontroller.gamecontroller(usingPi)
+        controller = gamecontroller.gamecontroller(using_pi)
          
          # start web server in separate thread
          #server = webserver(port, controller)
@@ -70,16 +69,16 @@ def main( argv ):
          #sock_comms = socket_comms( '/tmp/uds_socket' );
          #threadSock = Thread(target = sock_comms.start, args = [])
          #threadSock.start()
-        lost = lostengine( controller, quitApp )
+        lost = SwanEngine(controller, quitApp)
         print("start it")
-        lost.init( usingPi )
-        #threadUI = Thread(target = lost.init, args = [ usingPi ])
+        lost.init( using_pi )
+        #threadUI = Thread(target = lost.init, args = [ using_pi ])
         #threadUI.start()
 
 
          # start lost engine
          #lost = lostengine(controller)
-         #lost.init( usingPi )
+         #lost.init( using_pi )
          #lost.mainLoop()
          
     except Exception as e:
@@ -110,6 +109,7 @@ def quitApp():
     #threadUI.join()
     #server.stop()
     #thread.join()
+
 
 if __name__ == "__main__":
     main(sys.argv[1:])
