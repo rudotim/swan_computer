@@ -36,8 +36,11 @@ class webserver_config(BaseHTTPRequestHandler):
             # set the right mime type
 
             sendReply = False
+            mimetype = "text/html"
             if None != re.search('/swan/*', self.path):
-                ctype = cgi.parse_header(self.headers.getheader('content-type'))
+                ctype = ""
+                if self.headers['content-type']:
+                    ctype = cgi.parse_header(self.headers['content-type'])
                 if ctype == 'application/json':
                     mimetype = "application/json"
                     sendReply = True
@@ -57,22 +60,23 @@ class webserver_config(BaseHTTPRequestHandler):
                 mimetype='text/css'
                 sendReply = True
 
-            if sendReply == True:
+            if sendReply:
                 # Open the static file requested and send it
-                f = open(curdir + sep + "../webroot" + sep + self.path) 
+#                f = open(curdir + sep + "../webroot" + sep + self.path)
+                f = open(curdir + sep + "webroot" + sep + self.path, "rb")
                 self.send_response(200)
-                self.send_header('Content-type',mimetype)
+                self.send_header('Content-type', mimetype)
                 self.end_headers()
-                self.wfile.write(f.read())
+                self.wfile.write(bytes(f.read()))
                 f.close()
             return
         except IOError:
             self.send_error(404,'File Not Found: %s' % self.path)
             
     def do_POST(self):
-        print ("POST> " + self.path)
-        if self.path=="/":
-            self.path="/webroot/index.html"
+        print("POST> " + self.path)
+        if self.path == "/":
+            self.path = "/webroot/index.html"
         
         #if None != re.search('/swan/*', self.path):
         #    ctype, pdict = cgi.parse_header(self.headers.getheader('content-type'))
@@ -85,8 +89,8 @@ class webserver_config(BaseHTTPRequestHandler):
 
             sendReply = False
             if None != re.search('/swan/audio/*', self.path):
-                ctype, pdict = cgi.parse_header(self.headers.getheader('content-type'))
-                print (pdict)
+                ctype, pdict = cgi.parse_header(self.headers['content-type'])
+                print(pdict)
                 
                 if ctype == 'application/json':
                     data_string = self.rfile.read(int(self.headers['Content-Length']))
@@ -126,9 +130,8 @@ class webserver_config(BaseHTTPRequestHandler):
                 self.end_headers()
                 
                 jsond = "{ \"success\" : true }"
-                self.wfile.write( jsond )
+                self.wfile.write( bytes(jsond, "utf-8") )
                 
             return
         except IOError:
             self.send_error(404,'File Not Found: %s' % self.path)
-            
