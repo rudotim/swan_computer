@@ -7,7 +7,7 @@ from threading import Thread
 
 from lost import gamecontroller
 
-from lost.swanengine import SwanEngine
+from ui.ui_engine import SwanEngine
 import traceback
 
 import signal
@@ -37,7 +37,7 @@ class Swan:
             print('error: {0}'.format(cmd_string))
             sys.exit(2)
         for opt, arg in opts:
-            print (opt)
+            print(opt)
             if opt == '-h':
                 print('swan.py [-p <port>]')
                 sys.exit()
@@ -77,20 +77,20 @@ class Swan:
             #threadUI.start()
 
 
-             # start lost engine
-             #lost = lostengine(controller)
-             #lost.init( using_pi )
-             #lost.mainLoop()
+            # start lost engine
+            #lost = lostengine(controller)
+            #lost.init( using_pi )
+            #lost.mainLoop()
 
         except Exception as e:
             tb = traceback.format_exc()
             print('^C received, shutting down the web server: ', tb)
-             #sock_comms.stop()
-             #threadSock.join()
-        #threadSock.join()
-        #threadUI.join()
-             #server.stop()
-             #thread.join()
+            #sock_comms.stop()
+            #threadSock.join()
+            #threadSock.join()
+            #threadUI.join()
+            #server.stop()
+            #thread.join()
 
     def quitApp(self, ctrl_c=False):
         print("quitApp")
