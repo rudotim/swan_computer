@@ -2,12 +2,11 @@
 
 import sys, getopt
 
-#from gamecontroller import gamecontroller
 from threading import Thread
 
 from lost import lost_controller
 
-from ui.ui_engine import SwanEngine
+from ui.ui_engine import UIEngine
 import traceback
 
 import signal
@@ -61,7 +60,7 @@ class Swan:
         #threadUI.start()
 
         try:
-            self.controller = lost_controller.gamecontroller(self.using_pi)
+            self.controller = lost_controller.LostController(self.using_pi)
 
             #start web server in separate thread
             self.server = webserver(self.port, self.controller)
@@ -71,7 +70,7 @@ class Swan:
             #sock_comms = socket_comms( '/tmp/uds_socket' );
             #threadSock = Thread(target = sock_comms.start, args = [])
             #threadSock.start()
-            self.lost = SwanEngine(self.controller, self.quitApp)
+            self.lost = UIEngine(self.controller, self.quit_app)
             self.lost.init(self.using_pi)
             #threadUI = Thread(target = lost.init, args = [ using_pi ])
             #threadUI.start()
@@ -92,7 +91,7 @@ class Swan:
             #server.stop()
             #thread.join()
 
-    def quitApp(self, ctrl_c=False):
+    def quit_app(self, ctrl_c=False):
         print("quitApp")
         if ctrl_c:
             self.lost.stop()
@@ -108,9 +107,10 @@ class Swan:
 
 swan = None
 
+
 def signal_handler(sig, frame):
     print("CTRL-C")
-    swan.quitApp(True)
+    swan.quit_app(True)
 
 
 if __name__ == "__main__":
