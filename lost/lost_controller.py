@@ -3,7 +3,7 @@ from utils.countdown_thread import countdown_thread
 from video.videoplayer import videoplayer
 
 
-class gamecontroller:
+class LostController:
     
     countdownThread = None
     textReceiver = None

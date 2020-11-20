@@ -5,7 +5,7 @@ import sys, getopt
 #from gamecontroller import gamecontroller
 from threading import Thread
 
-from lost import gamecontroller
+from lost import lost_controller
 
 from ui.ui_engine import SwanEngine
 import traceback
@@ -61,7 +61,7 @@ class Swan:
         #threadUI.start()
 
         try:
-            self.controller = gamecontroller.gamecontroller(self.using_pi)
+            self.controller = lost_controller.gamecontroller(self.using_pi)
 
             #start web server in separate thread
             self.server = webserver(self.port, self.controller)

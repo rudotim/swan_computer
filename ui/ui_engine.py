@@ -9,7 +9,7 @@ from pygame.locals import *
 from ui.texteditor import TextEditor
 
 
-class SwanEngine:
+class UIEngine:
            
     running = True
     screen = None
