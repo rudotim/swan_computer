@@ -109,7 +109,8 @@ class webserver_config(BaseHTTPRequestHandler):
                     sendReply = True
                     
             elif None != re.search('/swan/video/*', self.path):
-                ctype, pdict = cgi.parse_header(self.headers.getheader('content-type'))
+                #ctype, pdict = cgi.parse_header(self.headers.getheader('content-type'))
+                ctype, pdict = cgi.parse_header(self.headers['content-type'])
                 if ctype == 'application/json':
                     data_string = self.rfile.read(int(self.headers['Content-Length']))
                     #print data_string

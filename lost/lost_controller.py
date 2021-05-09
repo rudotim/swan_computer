@@ -14,23 +14,23 @@ class LostController:
     
     def playVideo(self, video_file):
         videoPath = "res/video/" + video_file
-        print ("playing video: " + videoPath)
+        print("playing video: " + videoPath)
         
         if self.usingPi:
             vplayer = videoplayer()
-            vplayer.playVideo( videoPath )
+            vplayer.playVideo(videoPath)
         else:
-            print ("simulating video: " + videoPath)
+            print("simulating video: " + videoPath)
         
     def playAudio(self, audio_file):
         path = "res/audio/" + audio_file
-        print ("playing audio: " + path)
+        print("playing audio: " + path)
         
         if self.usingPi:
             vplayer = videoplayer()
             vplayer.playAudio( path )    
         else:
-            print ("simulating audio: " + path)
+            print("simulating audio: " + path)
             
     def resetCountdown(self, seconds):
         self.countdownThread.resetCountdown(seconds)

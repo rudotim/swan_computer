@@ -1,6 +1,7 @@
 #!/usr/local/bin/python3
 
-import sys, getopt
+import sys
+import getopt
 
 from threading import Thread
 
@@ -18,8 +19,6 @@ class Swan:
 
     def __init__(self, argv):
 
-        self.parse_parameters(argv)
-
         self.controller = None
         self.server = None
         self.lost = None
@@ -27,6 +26,8 @@ class Swan:
         self.port = 7777
 
         self.using_pi = False
+        self.parse_parameters(argv)
+
 
     def parse_parameters(self, argv):
         cmd_string = 'swan.py [-p <port>]'
@@ -38,23 +39,18 @@ class Swan:
         for opt, arg in opts:
             print(opt)
             if opt == '-h':
-                print('swan.py [-p <port>]')
+                print('swan.py [-p <port>] --pi')
                 sys.exit()
             elif opt in "-p":
-                port = opt
+                self.port = opt
             elif opt in "--pi":
-                using_pi = True
+                print("Using raspberry pi")
+                self.using_pi = True
 
     def start(self):
-        #controller = gamecontroller.gamecontroller(using_pi)
-
         #sock_comms = socket_comms('/tmp/uds_socket', controller);
         #threadSock = Thread(target=sock_comms.start, args=[])
         #threadSock.start()
-
-        #lost = lostengine(controller, quitApp );
-        #lost.init( using_pi )
-
 
         #threadUI = Thread(target=lost.init, args=[ using_pi ])
         #threadUI.start()
@@ -62,7 +58,7 @@ class Swan:
         try:
             self.controller = lost_controller.LostController(self.using_pi)
 
-            #start web server in separate thread
+            # start web server in separate thread
             self.server = webserver(self.port, self.controller)
             thread = Thread(target=self.server.start, args=[])
             thread.start()
@@ -70,16 +66,14 @@ class Swan:
             #sock_comms = socket_comms( '/tmp/uds_socket' );
             #threadSock = Thread(target = sock_comms.start, args = [])
             #threadSock.start()
+
+            # start lost UI engine
             self.lost = UIEngine(self.controller, self.quit_app)
             self.lost.init(self.using_pi)
+
             #threadUI = Thread(target = lost.init, args = [ using_pi ])
             #threadUI.start()
 
-
-            # start lost engine
-            #lost = lostengine(controller)
-            #lost.init( using_pi )
-            #lost.mainLoop()
 
         except Exception as e:
             tb = traceback.format_exc()
